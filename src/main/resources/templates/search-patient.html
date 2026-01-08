@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Find Patient</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-primary mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">QDC-LIMS</a>
+            <a href="/" class="btn btn-outline-light btn-sm">Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Find Patient</h4>
+
+                <!-- Search Form -->
+                <form action="/search" method="get" class="d-flex gap-2">
+                    <input type="text" name="query" class="form-control" placeholder="Enter Name, Mobile, or MRN..."
+                        th:value="${query}">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Table (Only shows if there are patients) -->
+        <div class="card shadow" th:if="${patients}">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Search Results</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>MRN</th>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Age/Gender</th>
+                            <th>City</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Loop through results -->
+                        <tr th:each="p : ${patients}">
+                            <td class="fw-bold text-primary" th:text="${p.mrn}"></td>
+                            <td th:text="${p.fullName}"></td>
+                            <td th:text="${p.mobileNumber}"></td>
+                            <td>
+                                <span th:text="${p.age} + ' Y / ' + ${p.gender}"></span>
+                                <!-- You can calculate Age from DOB later -->
+                            </td>
+                            <td>
+
+                                <small class="text-muted" th:text="${p.city}"></small>
+                            </td>
+                            <td>
+                                <!-- We will build this 'book' page next -->
+                                <a th:href="@{/book-test(patientId=${p.id})}" class="btn btn-sm btn-success">
+                                    Book Test
+                                </a>
+                            </td>
+
+                        </tr>
+                        <!-- If list is empty -->
+                        <tr th:if="${patients.empty}">
+                            <td colspan="5" class="text-center text-muted py-3">No patients found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

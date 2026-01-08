@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Enter Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .range-info {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-5">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="text-danger">🧪 Result Entry</h4>
+                <p class="mb-0">
+                    <strong>Patient:</strong> <span th:text="${order.patient.fullName}"></span> |
+                    <strong>Order ID:</strong> #<span th:text="${order.id}"></span>
+                </p>
+            </div>
+            <a href="/lab/worklist" class="btn btn-secondary">Cancel</a>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body">
+
+                <form th:action="@{/lab/save-results}" th:object="${order}" method="post">
+                    <!-- Hidden ID to know which order we are updating -->
+                    <input type="hidden" th:field="*{id}">
+
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 30%">Test Name</th>
+                                <th style="width: 30%">Result Value</th>
+                                <th style="width: 10%">Unit</th>
+                                <th style="width: 30%">Reference Range</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loop through the results list -->
+                            <tr th:each="result, stat : *{results}">
+
+                                <!-- Hidden ID for this specific result row -->
+                                <input type="hidden" th:field="*{results[__${stat.index}__].id}">
+
+                                <td class="fw-bold" th:text="${result.testDefinition.testName}"></td>
+
+                                <td>
+                                    <input type="text" th:field="*{results[__${stat.index}__].resultValue}"
+                                        class="form-control form-control-lg fw-bold text-primary"
+                                        placeholder="Enter Value" required>
+                                </td>
+
+                                <td th:text="${result.testDefinition.unit}"></td>
+
+                                <td>
+                                    <span th:if="${result.testDefinition.minRange != null}">
+                                        <span th:text="${result.testDefinition.minRange}"></span> -
+                                        <span th:text="${result.testDefinition.maxRange}"></span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-danger btn-lg px-5">
+                            ✅ Verify & Save
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
