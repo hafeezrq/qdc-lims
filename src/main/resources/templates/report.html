@@ -3,7 +3,7 @@
 
 <head>
     <title>Pathology Report</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Print Styling */
         @media print {
@@ -148,7 +148,7 @@
 
                 </p>
                 <div class="mt-4">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=Verified" alt="QR Code">
+                    <img th:src="'data:image/png;base64,' + ${qrImage}" alt="QR Code" width="100">
                 </div>
             </div>
 

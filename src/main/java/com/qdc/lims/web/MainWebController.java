@@ -6,6 +6,7 @@ import com.qdc.lims.entity.LabOrder;
 import com.qdc.lims.entity.Patient;
 import com.qdc.lims.service.PatientService;
 import com.qdc.lims.repository.LabOrderRepository;
+import com.qdc.lims.util.QrCodeUtil;
 
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -216,6 +217,16 @@ public class MainWebController {
 
         model.addAttribute("order", order);
         model.addAttribute("info", info); // Send to HTML
+
+        // --- NEW: Generate QR Code Locally ---
+        // Content: "Verified Report | Order #123 | Patient: Ali"
+        String qrContent = "Verified Report | ID: " + order.getId() + " | Patient: " + order.getPatient().getFullName();
+
+        // Generate a 150x150 pixel image string
+        String qrImageBase64 = QrCodeUtil.generateBase64Qr(qrContent, 150, 150);
+
+        model.addAttribute("qrImage", qrImageBase64);
+        // -------------------------------------
 
         return "report"; // Looks for report.html
     }
