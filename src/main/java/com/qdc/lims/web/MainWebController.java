@@ -2,6 +2,7 @@ package com.qdc.lims.web;
 
 import com.qdc.lims.entity.Doctor;
 import com.qdc.lims.entity.LabInfo;
+import com.qdc.lims.entity.LabOrder;
 import com.qdc.lims.entity.Patient;
 import com.qdc.lims.service.PatientService;
 import com.qdc.lims.repository.LabOrderRepository;
@@ -234,6 +235,38 @@ public class MainWebController {
         labInfo.setId(1L); // Force ID 1 to update the existing row
         labInfoRepo.save(labInfo);
         return "redirect:/settings?success=true";
+    }
+
+    // 16. Show Patient History / Profile
+    @GetMapping("/patient/history/{id}")
+    public String patientHistoryPage(@PathVariable Long id, Model model) {
+        // Load Patient
+        com.qdc.lims.entity.Patient patient = patientRepo.findById(id).orElseThrow();
+
+        // Load their Orders (History)
+        List<LabOrder> orders = orderRepo.findByPatientIdOrderByIdDesc(id);
+
+        model.addAttribute("patient", patient);
+        model.addAttribute("orders", orders);
+
+        return "patient-history";
+    }
+
+    // 17. Handle Balance Payment (The "Collect Cash" action)
+    @PostMapping("/orders/pay-balance")
+    public String payBalance(@RequestParam Long orderId, @RequestParam Double amount) {
+        LabOrder order = orderRepo.findById(orderId).orElseThrow();
+
+        // Update Paid Amount
+        double newPaid = order.getPaidAmount() + amount;
+        order.setPaidAmount(newPaid);
+
+        // Recalculate Balance (This triggers the @PreUpdate logic in Entity)
+        order.calculateBalance();
+
+        orderRepo.save(order);
+
+        return "redirect:/patient/history/" + order.getPatient().getId() + "?paymentSuccess=true";
     }
 
 }

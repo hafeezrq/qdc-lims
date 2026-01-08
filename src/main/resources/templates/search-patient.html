@@ -58,16 +58,17 @@
                                 <!-- You can calculate Age from DOB later -->
                             </td>
                             <td>
-
                                 <small class="text-muted" th:text="${p.city}"></small>
                             </td>
                             <td>
                                 <!-- We will build this 'book' page next -->
-                                <a th:href="@{/book-test(patientId=${p.id})}" class="btn btn-sm btn-success">
-                                    Book Test
+                                <a th:href="@{/patient/history/{id}(id=${p.id})}" class="btn btn-sm btn-info text-white">
+                                    📂 View History
+                                </a>
+                                <a th:href="@{/book-test(patientId=${p.id})}" class="btn btn-sm btn-outline-success ms-1">
+                                    + Book
                                 </a>
                             </td>
-
                         </tr>
                         <!-- If list is empty -->
                         <tr th:if="${patients.empty}">
