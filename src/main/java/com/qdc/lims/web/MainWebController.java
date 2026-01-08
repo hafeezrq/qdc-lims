@@ -269,4 +269,10 @@ public class MainWebController {
         return "redirect:/patient/history/" + order.getPatient().getId() + "?paymentSuccess=true";
     }
 
+    // 18. Admin Dashboard
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard() {
+        return "admin-dashboard";
+    }
+
 }
