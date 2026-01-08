@@ -29,9 +29,13 @@
                             Age: <span th:text="${patient.age}"></span>
                         </p>
                     </div>
-                    <a th:href="@{/book-test(patientId=${patient.id})}" class="btn btn-success btn-lg">
+                    <!--<a th:href="@{/book-test(patientId=${patient.id})}" class="btn btn-success btn-lg">
                         + Book New Test
+                    </a> -->
+                    <a href="/reception/dashboard" class="btn btn-secondary">
+                        &larr; Back
                     </a>
+                    
                 </div>
             </div>
         </div>

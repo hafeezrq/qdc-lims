@@ -8,7 +8,7 @@
         /* Styles for Printing */
         @media print {
             .no-print {
-                display: none;
+                display: none important;
             }
 
             body {
@@ -122,9 +122,10 @@
             </button>
         
             <!-- Go to Dashboard -->
-            <a href="/" class="btn btn-dark btn-lg">
+            <a href="/reception/dashboard" class="btn btn-dark btn-lg">
                 🏠 Dashboard
             </a>
+
         
             <!-- Book Another -->
             <a href="/search" class="btn btn-outline-secondary btn-lg">
