@@ -24,10 +24,13 @@ public class LabOrder {
     private Doctor referringDoctor; // Visible to Receptionist ("Ref By: Dr. Bilal")
 
     private LocalDateTime orderDate;
-
     private String status; // "PENDING", "COMPLETED"
-
     private Double totalAmount; // Calculated automatically
+
+    // --- REPORT DELIVERY STATUS ---
+    private boolean isReportDelivered = false; // False = In Lab/Rack, True = With Patient
+
+    private LocalDateTime deliveryDate; // When was it handed over?
 
     // ---------- Update: To incorporate accounting ----------//
     private Double discountAmount = 0.0; // e.g. 100

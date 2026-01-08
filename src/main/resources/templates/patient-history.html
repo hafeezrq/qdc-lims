@@ -53,7 +53,7 @@
                             <th>Date</th>
                             <th>Status (Lab)</th>
                             <th>Payment Status</th>
-                            <th>Action</th>
+                            <th colspan="2">Payment & Delivery Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,34 +69,54 @@
                             </td>
 
                             <!-- (b) FINANCE STATUS -->
-                            <td>
-                                <div th:if="${ord.balanceDue > 0}">
-                                    <span class="badge bg-danger">DUE: Rs <span
-                                            th:text="${ord.balanceDue}"></span></span>
-                                    <!-- Collect Button -->
-                                    <button class="btn btn-outline-danger btn-sm ms-2"
+                            <td colspan="2">
+                            
+                                <!-- CASE 1: Lab Work NOT Done -->
+                                <div th:if="${ord.status == 'PENDING'}">
+                                    <span class="badge bg-warning text-dark">Lab Processing...</span>
+                                    <span th:if="${ord.balanceDue > 0}" class="text-danger small ms-2">
+                                        (Due: <span th:text="${ord.balanceDue}"></span>)
+                                    </span>
+                                </div>
+                            
+                                <!-- CASE 2: Report Ready, BUT Money Owed -->
+                                <div th:if="${ord.status == 'COMPLETED' and !ord.isReportDelivered and ord.balanceDue > 0}">
+                                    <span class="fw-bold text-danger me-2">Due: Rs <span th:text="${ord.balanceDue}"></span></span>
+                            
+                                    <!-- Pay Button -->
+                                    <button class="btn btn-outline-danger btn-sm"
                                         th:onclick="'openPayModal(' + ${ord.id} + ', ' + ${ord.balanceDue} + ')'">
-                                        Collect Cash
+                                        💰 Receive Cash
+                                    </button>
+                            
+                                    <!-- Disabled Deliver Button -->
+                                    <button class="btn btn-secondary btn-sm disabled" title="Clear dues first">
+                                        📦 Deliver
                                     </button>
                                 </div>
-                                <div th:if="${ord.balanceDue <= 0}">
-                                    <span class="badge bg-success">PAID</span>
+                            
+                                <!-- CASE 3: Report Ready AND Paid (Ready to hand over) -->
+                                <div th:if="${ord.status == 'COMPLETED' and !ord.isReportDelivered and ord.balanceDue <= 0}">
+                                    <span class="badge bg-success me-2">PAID</span>
+                            
+                                    <!-- Active Deliver Button -->
+                                    <form action="/orders/mark-delivered" method="post" class="d-inline">
+                                        <input type="hidden" name="orderId" th:value="${ord.id}">
+                                        <button type="submit" class="btn btn-success btn-sm fw-bold shadow-sm">
+                                            📦 Handover & Print
+                                        </button>
+                                    </form>
                                 </div>
+                            
+                                <!-- CASE 4: Already Delivered -->
+                                <div th:if="${ord.isReportDelivered}">
+                                    <span class="badge bg-secondary">Collected</span>
+                                    <a th:href="@{/orders/report/{id}(id=${ord.id})}" class="btn btn-sm btn-link text-muted"
+                                        target="_blank">Reprint</a>
+                                </div>
+                            
                             </td>
 
-                            <!-- (c) ACTIONS -->
-                            <td>
-                                <!-- View Receipt (Always available) -->
-                                <a th:href="@{/orders/receipt/{id}(id=${ord.id})}" class="btn btn-sm btn-secondary"
-                                    target="_blank">🧾 Receipt</a>
-
-                                <!-- Print Report (Only if READY) -->
-                                <a th:if="${ord.status == 'COMPLETED'}" th:href="@{/orders/report/{id}(id=${ord.id})}"
-                                    class="btn btn-sm btn-primary" target="_blank">🖨 Print Report</a>
-
-                                <span th:if="${ord.status != 'COMPLETED'}" class="text-muted small ms-2">Report not
-                                    ready</span>
-                            </td>
                         </tr>
                     </tbody>
                 </table>

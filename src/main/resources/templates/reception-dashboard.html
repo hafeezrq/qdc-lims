@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Reception Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-primary mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">QDC Reception</a>
+            <div>
+                <a href="/search" class="btn btn-outline-light btn-sm">Search Old Records</a>
+                <a href="/" class="btn btn-outline-light btn-sm">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h3 class="mb-4">Today's Report Status</h3>
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-ready">
+                    ✅ Ready for Pickup <span class="badge bg-light text-dark ms-1" th:text="${ready.size()}">0</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-processing">
+                    ⏳ Processing <span class="badge bg-light text-dark ms-1" th:text="${processing.size()}">0</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-collected">
+                    📦 Collected <span class="badge bg-light text-dark ms-1" th:text="${collected.size()}">0</span>
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content">
+
+            <!-- TAB 1: READY (The most important one) -->
+            <div class="tab-pane fade show active" id="tab-ready">
+                <div class="card shadow border-success">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Tests Ready</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="ord : ${ready}">
+                                    <td>
+                                        <span class="fw-bold" th:text="${ord.patient.fullName}"></span>
+                                        <br><small class="text-muted" th:text="${ord.patient.mrn}"></small>
+                                    </td>
+                                    <td>
+                                        <span th:each="res : ${ord.results}" class="badge bg-secondary me-1"
+                                            th:text="${res.testDefinition.shortCode}">
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <!-- No Money shown here. Just a link to open the file. -->
+                                        <a th:href="@{/patient/history/{id}(id=${ord.patient.id})}"
+                                            class="btn btn-primary btn-sm px-4 fw-bold">
+                                            Process Pickup &rarr;
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${ready.empty}">
+                                    <td colspan="3" class="text-center p-3 text-muted">No reports ready for pickup.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: PROCESSING -->
+            <div class="tab-pane fade" id="tab-processing">
+                <div class="card shadow">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-warning">
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Tests</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="ord : ${processing}">
+                                    <td th:text="${ord.patient.fullName}"></td>
+                                    <td><span th:each="res : ${ord.results}" class="badge bg-secondary me-1"
+                                            th:text="${res.testDefinition.shortCode}"></span></td>
+                                    <td><span class="badge bg-warning text-dark">In Lab</span></td>
+                                </tr>
+                                <tr th:if="${processing.empty}">
+                                    <td colspan="3" class="text-center p-3 text-muted">No pending orders.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: COLLECTED -->
+            <div class="tab-pane fade" id="tab-collected">
+                <div class="card shadow">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Time Collected</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="ord : ${collected}">
+                                    <td th:text="${ord.patient.fullName}"></td>
+                                    <td th:text="${#temporals.format(ord.deliveryDate, 'HH:mm')}"></td>
+                                    <td>
+                                        <a th:href="@{/orders/report/{id}(id=${ord.id})}"
+                                            class="btn btn-sm btn-outline-dark" target="_blank">Reprint</a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${collected.empty}">
+                                    <td colspan="3" class="text-center p-3 text-muted">No reports collected yet today.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Hidden Form for Delivery -->
+    <form id="deliveryForm" action="/orders/mark-delivered" method="post">
+        <input type="hidden" name="orderId" id="hiddenOrderId">
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function attemptDelivery(orderId, balance) {
+            if (balance > 0) {
+                alert("⛔ STOP: Payment is Due!\n\nPlease collect Rs " + balance + " before handing over the report.");
+                // Redirect to payment page
+                // We find the patient link from the table row (a hack, or we could pass patientId too)
+                // For now, simpler to alert them.
+            } else {
+                if (confirm("Confirm report handover to patient?")) {
+                    document.getElementById('hiddenOrderId').value = orderId;
+                    document.getElementById('deliveryForm').submit();
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
