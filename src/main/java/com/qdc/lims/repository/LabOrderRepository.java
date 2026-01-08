@@ -24,4 +24,7 @@ public interface LabOrderRepository extends JpaRepository<LabOrder, Long> {
     // 3. Collected (Delivered True, Delivery Date Today)
     List<LabOrder> findByIsReportDeliveredTrueAndDeliveryDateBetween(LocalDateTime start, LocalDateTime end);
 
+    // 4. Fetch all orders for a specific date range (e.g., Today 00:00 to 23:59)
+    List<LabOrder> findByOrderDateBetween(LocalDateTime start, LocalDateTime end);
+
 }
