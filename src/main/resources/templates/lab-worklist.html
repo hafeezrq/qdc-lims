@@ -1,81 +1,103 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>Lab Worklist</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
 
-<body class="bg-light">
-
+  <body class="bg-light">
     <nav class="navbar navbar-dark bg-danger mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span> LAB
-            </a>
-            <div>
-                <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
-                <!-- ADDED: Logout Button -->
-                <a href="/logout" class="btn btn-light btn-sm text-danger fw-bold">Log Out</a>
-            </div>
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span>
+          LAB
+        </a>
+        <div>
+          <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
+          <!-- ADDED: Logout Button -->
+          <a href="/logout" class="btn btn-light btn-sm text-danger fw-bold"
+            >Log Out</a
+          >
         </div>
+      </div>
     </nav>
 
     <div class="container">
-        <!-- FIXED: Title changed -->
-        <h3 class="mb-3">Daily Worklist</h3>
-    
-        <div class="card shadow">
-            <div class="card-body p-0">
-                <table class="table table-striped table-hover mb-0">
-                    <!-- FIXED: Header is now fully Black -->
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Patient</th>
-                            <th>Tests Requested</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="ord : ${orders}">
-                            <td th:text="${ord.id}" class="fw-bold"></td>
-                            <td th:text="${#temporals.format(ord.orderDate, 'dd-MM HH:mm')}"></td>
-                            <td>
-                                <span th:text="${ord.patient.fullName}" class="fw-bold"></span><br>
-                                <small class="text-muted"
-                                    th:text="${ord.patient.gender} + ', ' + ${ord.patient.age} + 'y'"></small>
-                            </td>
-                            <td>
-                                <span th:each="res : ${ord.results}" class="badge bg-secondary me-1"
-                                    th:text="${res.testDefinition.shortCode}">
-                                </span>
-                            </td>
-                            <td>
-                                <!-- FIXED: Dynamic Status Badge -->
-                                <span th:if="${ord.status == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
-                                <span th:if="${ord.status == 'COMPLETED'}" class="badge bg-success">Completed</span>
-                            </td>
-                            <td>
-                                <!-- Logic: Show 'Enter' if pending, 'View' if completed -->
-                                <a th:if="${ord.status == 'PENDING'}" th:href="@{/lab/enter-results/{id}(id=${ord.id})}"
-                                    class="btn btn-danger btn-sm">
-                                    🧪 Enter Results
-                                </a>
-    
-                                <a th:if="${ord.status == 'COMPLETED'}" th:href="@{/orders/report/{id}(id=${ord.id})}"
-                                    class="btn btn-success btn-sm">
-                                    📄 View Report
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</body>
+      <!-- FIXED: Title changed -->
+      <h3 class="mb-3">Daily Worklist</h3>
 
+      <div class="card shadow">
+        <div class="card-body p-0">
+          <table class="table table-striped table-hover mb-0">
+            <!-- FIXED: Header is now fully Black -->
+            <thead class="table-dark">
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Patient</th>
+                <th>Tests Requested</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="ord : ${orders}">
+                <td th:text="${ord.id}" class="fw-bold"></td>
+                <td
+                  th:text="${#temporals.format(ord.orderDate, 'dd-MM HH:mm')}"
+                ></td>
+                <td>
+                  <span th:text="${ord.patient.fullName}" class="fw-bold"></span
+                  ><br />
+                  <small
+                    class="text-muted"
+                    th:text="${ord.patient.gender} + ', ' + ${ord.patient.age} + 'y'"
+                  ></small>
+                </td>
+                <td>
+                  <span
+                    th:each="res : ${ord.results}"
+                    class="badge bg-secondary me-1"
+                    th:text="${res.testDefinition.shortCode}"
+                  >
+                  </span>
+                </td>
+                <td>
+                  <!-- FIXED: Dynamic Status Badge -->
+                  <span
+                    th:if="${ord.status == 'PENDING'}"
+                    class="badge bg-warning text-dark"
+                    >Pending</span
+                  >
+                  <span
+                    th:if="${ord.status == 'COMPLETED'}"
+                    class="badge bg-success"
+                    >Completed</span
+                  >
+                </td>
+                <td>
+                  <!-- Logic: Show 'Enter' if pending, 'View' if completed -->
+                  <a
+                    th:if="${ord.status == 'PENDING'}"
+                    th:href="@{/lab/enter-results/{id}(id=${ord.id})}"
+                    class="btn btn-danger btn-sm"
+                  >
+                    🧪 Enter Results
+                  </a>
+
+                  <a
+                    th:if="${ord.status == 'COMPLETED'}"
+                    th:href="@{/orders/report/{id}(id=${ord.id})}"
+                    class="btn btn-success btn-sm"
+                  >
+                    📄 View Report
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

@@ -1,124 +1,177 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title th:text="${isFirstRun} ? 'System Setup' : 'Lab Settings'">
+      Settings
+    </title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
 
-<head>
-    <title th:text="${isFirstRun} ? 'System Setup' : 'Lab Settings'">Settings</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body class="bg-light">
-
+  <body class="bg-light">
     <!-- NAVBAR: Hide "Dashboard" button if it is the First Run (because Dashboard doesn't exist yet) -->
     <nav class="navbar navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <span th:if="${isFirstRun}">🚀 INITIAL SETUP</span>
-                <span th:unless="${isFirstRun}">⚙ SYSTEM CONFIGURATION</span>
-            </a>
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <span th:if="${isFirstRun}">🚀 INITIAL SETUP</span>
+          <span th:unless="${isFirstRun}">⚙ SYSTEM CONFIGURATION</span>
+        </a>
 
-            <!-- Only show this button in Edit Mode -->
-            <a th:unless="${isFirstRun}" href="/admin/dashboard" class="btn btn-outline-light btn-sm">Dashboard</a>
-        </div>
+        <!-- Only show this button in Edit Mode -->
+        <a
+          th:unless="${isFirstRun}"
+          href="/admin/dashboard"
+          class="btn btn-outline-light btn-sm"
+          >Dashboard</a
+        >
+      </div>
     </nav>
 
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <!-- Success Message (Only for Edit Mode) -->
+          <div th:if="${param.success}" class="alert alert-success">
+            ✅ Settings Updated Successfully!
+          </div>
 
-                <!-- Success Message (Only for Edit Mode) -->
-                <div th:if="${param.success}" class="alert alert-success">
-                    ✅ Settings Updated Successfully!
-                </div>
+          <!-- Welcome Message (Only for First Run) -->
+          <div th:if="${isFirstRun}" class="text-center mb-4">
+            <h2 class="fw-bold">Welcome to QDC-LIMS</h2>
+            <p class="text-muted">
+              Please configure your lab details to get started.
+            </p>
+          </div>
 
-                <!-- Welcome Message (Only for First Run) -->
-                <div th:if="${isFirstRun}" class="text-center mb-4">
-                    <h2 class="fw-bold">Welcome to QDC-LIMS</h2>
-                    <p class="text-muted">Please configure your lab details to get started.</p>
-                </div>
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white">Lab Details</div>
+            <div class="card-body">
+              <!-- DYNAMIC FORM ACTION: 
+                If First Run -> POST to /setup
+                If Edit Mode -> POST to /settings 
+            -->
+              <form
+                th:action="${isFirstRun} ? @{/setup} : @{/settings}"
+                th:object="${labInfo}"
+                method="post"
+              >
+                <!-- === NEW: ADMIN ACCOUNT SETUP (Only visible on First Run) ===-->
+                <div
+                  th:if="${isFirstRun}"
+                  class="bg-warning-subtle p-3 rounded mb-4 border border-warning"
+                >
+                  <h5 class="text-dark fw-bold">
+                    <i class="fas fa-user-shield"></i> Create Admin Account
+                  </h5>
+                  <p class="small text-muted mb-2">
+                    You will use this to log in.
+                  </p>
 
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        Lab Details
+                  <div class="row">
+                    <div class="col-6">
+                      <label class="fw-bold">Username</label>
+                      <!-- We use 'name' attribute to send this separately from 'labInfo' object -->
+                      <input
+                        type="text"
+                        name="adminUsername"
+                        class="form-control"
+                        placeholder="admin"
+                        required
+                      />
                     </div>
-                    <div class="card-body">
-
-                        <!-- DYNAMIC FORM ACTION: 
-                             If First Run -> POST to /setup
-                             If Edit Mode -> POST to /settings 
-                        -->
-                        <form th:action="${isFirstRun} ? @{/setup} : @{/settings}" th:object="${labInfo}" method="post">
-
-                            <!-- === NEW: ADMIN ACCOUNT SETUP (Only visible on First Run) === -->
-                            <div th:if="${isFirstRun}" class="bg-warning-subtle p-3 rounded mb-4 border border-warning">
-                                <h5 class="text-dark fw-bold"><i class="fas fa-user-shield"></i> Create Admin Account</h5>
-                                <p class="small text-muted mb-2">You will use this to log in.</p>
-                            
-                                <div class="row">
-                                    <div class="col-6">
-                                        <label class="fw-bold">Username</label>
-                                        <!-- We use 'name' attribute to send this separately from 'labInfo' object -->
-                                        <input type="text" name="adminUsername" class="form-control" placeholder="admin" required>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="fw-bold">Password</label>
-                                        <input type="password" name="adminPassword" class="form-control" placeholder="******" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- ============================================================ -->
-
-                            <div class="mb-3">
-                                <label class="fw-bold">Lab Name</label>
-                                <input type="text" th:field="*{labName}" class="form-control"
-                                    placeholder="e.g. Al-Shifa Labs" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label>Tagline / Slogan</label>
-                                <input type="text" th:field="*{tagLine}" class="form-control"
-                                    placeholder="Excellence in Diagnostics">
-                            </div>
-
-                            <div class="mb-3">
-                                <label>Phone Number</label>
-                                <input type="text" th:field="*{phoneNumber}" class="form-control" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label>Email Address</label>
-                                <input type="email" th:field="*{email}" class="form-control"
-                                    placeholder="info@mylab.com">
-                            </div>
-
-                            <div class="mb-3">
-                                <label>Website</label>
-                                <input type="text" th:field="*{website}" class="form-control"
-                                    placeholder="www.mylab.com">
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <label>City</label>
-                                    <input type="text" th:field="*{city}" class="form-control">
-                                </div>
-                                <div class="col-6">
-                                    <label>Street Address</label>
-                                    <input type="text" th:field="*{address}" class="form-control">
-                                </div>
-                            </div>
-
-                            <!-- DYNAMIC BUTTON TEXT -->
-                            <button type="submit" class="btn btn-primary w-100 py-2">
-                                <span th:if="${isFirstRun}">🚀 Start System</span>
-                                <span th:unless="${isFirstRun}">💾 Update Configuration</span>
-                            </button>
-                        </form>
+                    <div class="col-6">
+                      <label class="fw-bold">Password</label>
+                      <input
+                        type="password"
+                        name="adminPassword"
+                        class="form-control"
+                        placeholder="******"
+                        required
+                      />
                     </div>
+                  </div>
                 </div>
+                <!-- ============================================================ -->
+
+                <div class="mb-3">
+                  <label class="fw-bold">Lab Name</label>
+                  <input
+                    type="text"
+                    th:field="*{labName}"
+                    class="form-control"
+                    placeholder="e.g. Al-Shifa Labs"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label>Tagline / Slogan</label>
+                  <input
+                    type="text"
+                    th:field="*{tagLine}"
+                    class="form-control"
+                    placeholder="Excellence in Diagnostics"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label>Phone Number</label>
+                  <input
+                    type="text"
+                    th:field="*{phoneNumber}"
+                    class="form-control"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label>Email Address</label>
+                  <input
+                    type="email"
+                    th:field="*{email}"
+                    class="form-control"
+                    placeholder="info@mylab.com"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label>Website</label>
+                  <input
+                    type="text"
+                    th:field="*{website}"
+                    class="form-control"
+                    placeholder="www.mylab.com"
+                  />
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label>City</label>
+                    <input
+                      type="text"
+                      th:field="*{city}"
+                      class="form-control"
+                    />
+                  </div>
+                  <div class="col-6">
+                    <label>Street Address</label>
+                    <input
+                      type="text"
+                      th:field="*{address}"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+
+                <!-- DYNAMIC BUTTON TEXT -->
+                <button type="submit" class="btn btn-primary w-100 py-2">
+                  <span th:if="${isFirstRun}">🚀 Start System</span>
+                  <span th:unless="${isFirstRun}">💾 Update Configuration</span>
+                </button>
+              </form>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-
-</body>
-
+  </body>
 </html>

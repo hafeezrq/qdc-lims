@@ -1,40 +1,60 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>Login</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
 
-<body class="bg-dark d-flex align-items-center justify-content-center" style="height: 100vh;">
+  <body
+    class="bg-dark d-flex align-items-center justify-content-center"
+    style="height: 100vh"
+  >
+    <div class="card shadow p-4 border-0" style="width: 400px">
+      <div class="text-center mb-4">
+        <h1
+          class="text-primary fw-bold"
+          th:text="${labInfo != null ? labInfo.labName : 'QDC LIMS'}"
+        >
+          LIMS
+        </h1>
+        <p class="text-muted">Sign in to your account</p>
+      </div>
 
-    <div class="card shadow p-4 border-0" style="width: 400px;">
-        <div class="text-center mb-4">
-            <h1 class="text-primary fw-bold" th:text="${labInfo != null ? labInfo.labName : 'QDC LIMS'}">LIMS</h1>
-            <p class="text-muted">Sign in to your account</p>
+      <div th:if="${param.error}" class="alert alert-danger text-center small">
+        Invalid Username or Password
+      </div>
+
+      <div
+        th:if="${param.logout}"
+        class="alert alert-success text-center small"
+      >
+        You have been logged out.
+      </div>
+
+      <form action="/login" method="post">
+        <div class="mb-3">
+          <input
+            type="text"
+            name="username"
+            class="form-control form-control-lg"
+            placeholder="Username"
+            required
+            autofocus
+          />
         </div>
-
-        <div th:if="${param.error}" class="alert alert-danger text-center small">
-            Invalid Username or Password
+        <div class="mb-3">
+          <input
+            type="password"
+            name="password"
+            class="form-control form-control-lg"
+            placeholder="Password"
+            required
+          />
         </div>
-
-        <div th:if="${param.logout}" class="alert alert-success text-center small">
-            You have been logged out.
-        </div>
-
-        <form action="/login" method="post">
-            <div class="mb-3">
-                <input type="text" name="username" class="form-control form-control-lg" placeholder="Username" required
-                    autofocus>
-            </div>
-            <div class="mb-3">
-                <input type="password" name="password" class="form-control form-control-lg" placeholder="Password"
-                    required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 btn-lg mt-2">Login</button>
-        </form>
+        <button type="submit" class="btn btn-primary w-100 btn-lg mt-2">
+          Login
+        </button>
+      </form>
     </div>
-
-</body>
-
+  </body>
 </html>

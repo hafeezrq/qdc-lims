@@ -1,174 +1,231 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>Patient History</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
 
-<body class="bg-light">
-
+  <body class="bg-light">
     <nav class="navbar navbar-dark bg-primary mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="/">QDC-LIMS Reception</a>
-            <a href="/search" class="btn btn-outline-light btn-sm">Back to Search</a>
-        </div>
+      <div class="container">
+        <a class="navbar-brand" href="/">QDC-LIMS Reception</a>
+        <a href="/search" class="btn btn-outline-light btn-sm"
+          >Back to Search</a
+        >
+      </div>
     </nav>
 
     <div class="container">
-
-        <!-- Patient Header -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h3 class="text-primary mb-0" th:text="${patient.fullName}"></h3>
-                        <p class="text-muted mb-0">
-                            MRN: <span th:text="${patient.mrn}"></span> |
-                            Mobile: <span th:text="${patient.mobileNumber}"></span> |
-                            Age: <span th:text="${patient.age}"></span>
-                        </p>
-                    </div>
-                    <!--<a th:href="@{/book-test(patientId=${patient.id})}" class="btn btn-success btn-lg">
+      <!-- Patient Header -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h3 class="text-primary mb-0" th:text="${patient.fullName}"></h3>
+              <p class="text-muted mb-0">
+                MRN: <span th:text="${patient.mrn}"></span> | Mobile:
+                <span th:text="${patient.mobileNumber}"></span> | Age:
+                <span th:text="${patient.age}"></span>
+              </p>
+            </div>
+            <!--<a th:href="@{/book-test(patientId=${patient.id})}" class="btn btn-success btn-lg">
                         + Book New Test
                     </a> -->
-                    <a href="/reception/dashboard" class="btn btn-secondary">
-                        &larr; Back
-                    </a>
-                    
-                </div>
-            </div>
+            <a href="/reception/dashboard" class="btn btn-secondary">
+              &larr; Back
+            </a>
+          </div>
         </div>
+      </div>
 
-        <!-- Success Message -->
-        <div th:if="${param.paymentSuccess}" class="alert alert-success alert-dismissible fade show">
-            ✅ Payment Received! Balance updated.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <!-- Success Message -->
+      <div
+        th:if="${param.paymentSuccess}"
+        class="alert alert-success alert-dismissible fade show"
+      >
+        ✅ Payment Received! Balance updated.
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+
+      <!-- Orders List -->
+      <h4 class="mb-3">Visit History</h4>
+      <div class="card shadow">
+        <div class="card-body p-0">
+          <table class="table table-striped table-hover mb-0 align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Status (Lab)</th>
+                <th>Payment Status</th>
+                <th colspan="2">Payment & Delivery Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="ord : ${orders}">
+                <td class="fw-bold" th:text="'#' + ${ord.id}"></td>
+                <td
+                  th:text="${#temporals.format(ord.orderDate, 'dd-MMM HH:mm')}"
+                ></td>
+
+                <!-- (a) LAB STATUS -->
+                <td>
+                  <span
+                    th:if="${ord.status == 'PENDING'}"
+                    class="badge bg-warning text-dark"
+                    >IN PROCESS</span
+                  >
+                  <span
+                    th:if="${ord.status == 'COMPLETED'}"
+                    class="badge bg-success"
+                    >READY</span
+                  >
+                </td>
+
+                <!-- (b) FINANCE STATUS -->
+                <td colspan="2">
+                  <!-- CASE 1: Lab Work NOT Done -->
+                  <div th:if="${ord.status == 'PENDING'}">
+                    <span class="badge bg-warning text-dark"
+                      >Lab Processing...</span
+                    >
+                    <span
+                      th:if="${ord.balanceDue > 0}"
+                      class="text-danger small ms-2"
+                    >
+                      (Due: <span th:text="${ord.balanceDue}"></span>)
+                    </span>
+                  </div>
+
+                  <!-- CASE 2: Report Ready, BUT Money Owed -->
+                  <div
+                    th:if="${ord.status == 'COMPLETED' and !ord.isReportDelivered and ord.balanceDue > 0}"
+                  >
+                    <span class="fw-bold text-danger me-2"
+                      >Due: Rs <span th:text="${ord.balanceDue}"></span
+                    ></span>
+
+                    <!-- Pay Button -->
+                    <button
+                      class="btn btn-outline-danger btn-sm"
+                      th:onclick="'openPayModal(' + ${ord.id} + ', ' + ${ord.balanceDue} + ')'"
+                    >
+                      💰 Receive Cash
+                    </button>
+
+                    <!-- Disabled Deliver Button -->
+                    <button
+                      class="btn btn-secondary btn-sm disabled"
+                      title="Clear dues first"
+                    >
+                      📦 Deliver
+                    </button>
+                  </div>
+
+                  <!-- CASE 3: Report Ready AND Paid (Ready to hand over) -->
+                  <div
+                    th:if="${ord.status == 'COMPLETED' and !ord.isReportDelivered and ord.balanceDue <= 0}"
+                  >
+                    <span class="badge bg-success me-2">PAID</span>
+
+                    <!-- Active Deliver Button -->
+                    <form
+                      action="/orders/mark-delivered"
+                      method="post"
+                      class="d-inline"
+                    >
+                      <input
+                        type="hidden"
+                        name="orderId"
+                        th:value="${ord.id}"
+                      />
+                      <button
+                        type="submit"
+                        class="btn btn-success btn-sm fw-bold shadow-sm"
+                      >
+                        📦 Handover & Print
+                      </button>
+                    </form>
+                  </div>
+
+                  <!-- CASE 4: Already Delivered -->
+                  <div th:if="${ord.isReportDelivered}">
+                    <span class="badge bg-secondary">Collected</span>
+                    <a
+                      th:href="@{/orders/report/{id}(id=${ord.id})}"
+                      class="btn btn-sm btn-link text-muted"
+                      target="_blank"
+                      >Reprint</a
+                    >
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-
-        <!-- Orders List -->
-        <h4 class="mb-3">Visit History</h4>
-        <div class="card shadow">
-            <div class="card-body p-0">
-                <table class="table table-striped table-hover mb-0 align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Status (Lab)</th>
-                            <th>Payment Status</th>
-                            <th colspan="2">Payment & Delivery Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="ord : ${orders}">
-                            <td class="fw-bold" th:text="'#' + ${ord.id}"></td>
-                            <td th:text="${#temporals.format(ord.orderDate, 'dd-MMM HH:mm')}"></td>
-
-                            <!-- (a) LAB STATUS -->
-                            <td>
-                                <span th:if="${ord.status == 'PENDING'}" class="badge bg-warning text-dark">IN
-                                    PROCESS</span>
-                                <span th:if="${ord.status == 'COMPLETED'}" class="badge bg-success">READY</span>
-                            </td>
-
-                            <!-- (b) FINANCE STATUS -->
-                            <td colspan="2">
-                            
-                                <!-- CASE 1: Lab Work NOT Done -->
-                                <div th:if="${ord.status == 'PENDING'}">
-                                    <span class="badge bg-warning text-dark">Lab Processing...</span>
-                                    <span th:if="${ord.balanceDue > 0}" class="text-danger small ms-2">
-                                        (Due: <span th:text="${ord.balanceDue}"></span>)
-                                    </span>
-                                </div>
-                            
-                                <!-- CASE 2: Report Ready, BUT Money Owed -->
-                                <div th:if="${ord.status == 'COMPLETED' and !ord.isReportDelivered and ord.balanceDue > 0}">
-                                    <span class="fw-bold text-danger me-2">Due: Rs <span th:text="${ord.balanceDue}"></span></span>
-                            
-                                    <!-- Pay Button -->
-                                    <button class="btn btn-outline-danger btn-sm"
-                                        th:onclick="'openPayModal(' + ${ord.id} + ', ' + ${ord.balanceDue} + ')'">
-                                        💰 Receive Cash
-                                    </button>
-                            
-                                    <!-- Disabled Deliver Button -->
-                                    <button class="btn btn-secondary btn-sm disabled" title="Clear dues first">
-                                        📦 Deliver
-                                    </button>
-                                </div>
-                            
-                                <!-- CASE 3: Report Ready AND Paid (Ready to hand over) -->
-                                <div th:if="${ord.status == 'COMPLETED' and !ord.isReportDelivered and ord.balanceDue <= 0}">
-                                    <span class="badge bg-success me-2">PAID</span>
-                            
-                                    <!-- Active Deliver Button -->
-                                    <form action="/orders/mark-delivered" method="post" class="d-inline">
-                                        <input type="hidden" name="orderId" th:value="${ord.id}">
-                                        <button type="submit" class="btn btn-success btn-sm fw-bold shadow-sm">
-                                            📦 Handover & Print
-                                        </button>
-                                    </form>
-                                </div>
-                            
-                                <!-- CASE 4: Already Delivered -->
-                                <div th:if="${ord.isReportDelivered}">
-                                    <span class="badge bg-secondary">Collected</span>
-                                    <a th:href="@{/orders/report/{id}(id=${ord.id})}" class="btn btn-sm btn-link text-muted"
-                                        target="_blank">Reprint</a>
-                                </div>
-                            
-                            </td>
-
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+      </div>
     </div>
 
     <!-- PAYMENT MODAL (Hidden by default) -->
     <div class="modal fade" id="payModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">Collect Balance Payment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="/orders/pay-balance" method="post">
-                        <input type="hidden" name="orderId" id="modalOrderId">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title">Collect Balance Payment</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form action="/orders/pay-balance" method="post">
+              <input type="hidden" name="orderId" id="modalOrderId" />
 
-                        <div class="mb-3">
-                            <label>Current Balance Due</label>
-                            <input type="text" id="modalBalanceDisplay" class="form-control" readonly>
-                        </div>
+              <div class="mb-3">
+                <label>Current Balance Due</label>
+                <input
+                  type="text"
+                  id="modalBalanceDisplay"
+                  class="form-control"
+                  readonly
+                />
+              </div>
 
-                        <div class="mb-3">
-                            <label class="fw-bold">Amount Receiving Now (Rs)</label>
-                            <input type="number" name="amount" class="form-control" required>
-                        </div>
+              <div class="mb-3">
+                <label class="fw-bold">Amount Receiving Now (Rs)</label>
+                <input
+                  type="number"
+                  name="amount"
+                  class="form-control"
+                  required
+                />
+              </div>
 
-                        <button type="submit" class="btn btn-success w-100">Confirm Payment</button>
-                    </form>
-                </div>
-            </div>
+              <button type="submit" class="btn btn-success w-100">
+                Confirm Payment
+              </button>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Bootstrap JS + Custom Modal Logic -->
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script>
-        function openPayModal(orderId, balance) {
-            document.getElementById('modalOrderId').value = orderId;
-            document.getElementById('modalBalanceDisplay').value = "Rs " + balance;
+      function openPayModal(orderId, balance) {
+        document.getElementById("modalOrderId").value = orderId;
+        document.getElementById("modalBalanceDisplay").value = "Rs " + balance;
 
-            // Show Bootstrap Modal
-            var myModal = new bootstrap.Modal(document.getElementById('payModal'));
-            myModal.show();
-        }
+        // Show Bootstrap Modal
+        var myModal = new bootstrap.Modal(document.getElementById("payModal"));
+        myModal.show();
+      }
     </script>
-</body>
-
+  </body>
 </html>

@@ -1,78 +1,94 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>Commission Manager</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
 
-<body class="bg-light">
-
+  <body class="bg-light">
     <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3>🤝 Doctor Commissions</h3>
-            <a href="/admin/dashboard" class="btn btn-outline-dark">Back to Admin</a>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>🤝 Doctor Commissions</h3>
+        <a href="/admin/dashboard" class="btn btn-outline-dark"
+          >Back to Admin</a
+        >
+      </div>
+
+      <div
+        th:if="${param.success}"
+        class="alert alert-success alert-dismissible fade show"
+        role="alert"
+      >
+        ✅ Payment Recorded Successfully! The doctor's balance is now cleared.
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="card shadow">
+        <div class="card-header bg-dark text-white">Pending Payouts</div>
+        <div class="card-body p-0">
+          <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Doctor Name</th>
+                <th>Clinic</th>
+                <th>Rate</th>
+                <th>Total Pending</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="doc : ${doctors}">
+                <td th:text="${doc.name}" class="fw-bold"></td>
+                <td th:text="${doc.clinicName}"></td>
+                <td>
+                  <span
+                    class="badge bg-secondary"
+                    th:text="${doc.commissionPercentage} + '%'"
+                  ></span>
+                </td>
+
+                <!-- Get the balance from the Map using the Doctor ID -->
+                <td>
+                  <span
+                    class="fs-5 fw-bold text-danger"
+                    th:text="'Rs ' + ${balances.get(doc.id)}"
+                  >
+                  </span>
+                </td>
+
+                <td>
+                  <!-- Pay Button (Only show if balance > 0) -->
+                  <form
+                    th:if="${balances.get(doc.id) > 0}"
+                    method="post"
+                    action="/admin/finance/pay-doctor"
+                    onsubmit="return confirm('Are you sure you want to payout this doctor?');"
+                  >
+                    <input type="hidden" name="doctorId" th:value="${doc.id}" />
+                    <button type="submit" class="btn btn-success btn-sm">
+                      💰 Mark Paid
+                    </button>
+                  </form>
+
+                  <span
+                    th:if="${balances.get(doc.id) == 0}"
+                    class="text-muted small"
+                  >
+                    No Dues
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-
-        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
-            ✅ Payment Recorded Successfully! The doctor's balance is now cleared.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-
-        <div class="card shadow">
-            <div class="card-header bg-dark text-white">
-                Pending Payouts
-            </div>
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0 align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Doctor Name</th>
-                            <th>Clinic</th>
-                            <th>Rate</th>
-                            <th>Total Pending</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="doc : ${doctors}">
-                            <td th:text="${doc.name}" class="fw-bold"></td>
-                            <td th:text="${doc.clinicName}"></td>
-                            <td><span class="badge bg-secondary" th:text="${doc.commissionPercentage} + '%'"></span>
-                            </td>
-
-                            <!-- Get the balance from the Map using the Doctor ID -->
-                            <td>
-                                <span class="fs-5 fw-bold text-danger" th:text="'Rs ' + ${balances.get(doc.id)}">
-                                </span>
-                            </td>
-
-                            <td>
-                                <!-- Pay Button (Only show if balance > 0) -->
-                                <form th:if="${balances.get(doc.id) > 0}" method="post"
-                                    action="/admin/finance/pay-doctor"
-                                    onsubmit="return confirm('Are you sure you want to payout this doctor?');">
-
-                                    <input type="hidden" name="doctorId" th:value="${doc.id}">
-                                    <button type="submit" class="btn btn-success btn-sm">
-                                        💰 Mark Paid
-                                    </button>
-                                </form>
-
-                                <span th:if="${balances.get(doc.id) == 0}" class="text-muted small">
-                                    No Dues
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+      </div>
     </div>
-<!-- Bootstrap JS for the Close Button to work -->
-<script src="/js/bootstrap.bundle.min.js"></script>
-
-</body>
-
+    <!-- Bootstrap JS for the Close Button to work -->
+    <script src="/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

@@ -1,73 +1,89 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>Admin Dashboard</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
 
-<body class="bg-dark">
-
+  <body class="bg-dark">
     <nav class="navbar navbar-dark bg-secondary mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                🔒 <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span> ADMIN
-
-            </a>
-            <a href="/logout" class="btn btn-outline-light btn-sm">Log Out</a>
-        </div>
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          🔒
+          <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span>
+          ADMIN
+        </a>
+        <a href="/logout" class="btn btn-outline-light btn-sm">Log Out</a>
+      </div>
     </nav>
 
     <div class="container">
-        <h2 class="text-white mb-4">Management Console</h2>
-        <div class="row">
-
-            <!-- MASTER DATA -->
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-header fw-bold">Master Data</div>
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <a href="/tests/list" class="btn btn-outline-primary">🔬 Manage Tests & Recipes</a>
-                            <a href="/doctors/list" class="btn btn-outline-primary">👨‍⚕️ Manage Doctors</a>
-                            <a href="/inventory" class="btn btn-outline-primary">📦 Inventory & Stock</a>
-                            <a href="/admin/suppliers" class="btn btn-outline-dark">🚚 Manage Suppliers</a>
-                            <a href="/admin/suppliers/purchase" class="btn btn-outline-success">📥 Record Purchase</a>
-
-                        </div>
-                    </div>
-                </div>
+      <h2 class="text-white mb-4">Management Console</h2>
+      <div class="row">
+        <!-- MASTER DATA -->
+        <div class="col-md-4 mb-3">
+          <div class="card h-100">
+            <div class="card-header fw-bold">Master Data</div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <a href="/tests/list" class="btn btn-outline-primary"
+                  >🔬 Manage Tests & Recipes</a
+                >
+                <a href="/doctors/list" class="btn btn-outline-primary"
+                  >👨‍⚕️ Manage Doctors</a
+                >
+                <a href="/inventory" class="btn btn-outline-primary"
+                  >📦 Inventory & Stock</a
+                >
+                <a href="/admin/suppliers" class="btn btn-outline-dark"
+                  >🚚 Manage Suppliers</a
+                >
+                <a
+                  href="/admin/suppliers/purchase"
+                  class="btn btn-outline-success"
+                  >📥 Record Purchase</a
+                >
+              </div>
             </div>
-
-            <!-- CONFIGURATION -->
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-header fw-bold">Configuration</div>
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <a href="/settings" class="btn btn-outline-dark">⚙️ Lab Settings</a>
-                            <a href="/admin/users" class="btn btn-outline-secondary">👥 User Management</a>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FINANCE (Coming Soon) -->
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-header fw-bold">Finance</div>
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <a href="/admin/finance/daily" class="btn btn-outline-success">💰 Daily Closing</a>
-                            <a href="/admin/finance/commissions" class="btn btn-outline-success">🤝 Pay Commissions</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+          </div>
         </div>
-    </div>
-</body>
 
+        <!-- CONFIGURATION -->
+        <div class="col-md-4 mb-3">
+          <div class="card h-100">
+            <div class="card-header fw-bold">Configuration</div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <a href="/settings" class="btn btn-outline-dark"
+                  >⚙️ Lab Settings</a
+                >
+                <a href="/admin/users" class="btn btn-outline-secondary"
+                  >👥 User Management</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINANCE (Coming Soon) -->
+        <div class="col-md-4 mb-3">
+          <div class="card h-100">
+            <div class="card-header fw-bold">Finance</div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <a href="/admin/finance/daily" class="btn btn-outline-success"
+                  >💰 Daily Closing</a
+                >
+                <a
+                  href="/admin/finance/commissions"
+                  class="btn btn-outline-success"
+                  >🤝 Pay Commissions</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

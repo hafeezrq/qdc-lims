@@ -1,104 +1,121 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>Daily Closing Report</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
 
-<body class="bg-light">
-
+  <body class="bg-light">
     <div class="container mt-4">
-
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h3 class="fw-bold text-primary">💰 Daily Cash Closing</h3>
-                <p class="text-muted mb-0">Financial Summary for: <span class="fw-bold text-dark"
-                        th:text="${date}"></span></p>
-            </div>
-            <a href="/admin/dashboard" class="btn btn-outline-dark">Back to Admin</a>
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h3 class="fw-bold text-primary">💰 Daily Cash Closing</h3>
+          <p class="text-muted mb-0">
+            Financial Summary for:
+            <span class="fw-bold text-dark" th:text="${date}"></span>
+          </p>
         </div>
+        <a href="/admin/dashboard" class="btn btn-outline-dark"
+          >Back to Admin</a
+        >
+      </div>
 
-        <!-- SUMMARY CARDS -->
-        <div class="row text-center mb-4">
-            <!-- 1. Total Sales -->
-            <div class="col-md-3">
-                <div class="card bg-primary text-white shadow-sm h-100">
-                    <div class="card-body">
-                        <h2 class="fw-bold">Rs <span th:text="${totalBilled}"></span></h2>
-                        <small>Total Sales (Gross)</small>
-                    </div>
-                </div>
+      <!-- SUMMARY CARDS -->
+      <div class="row text-center mb-4">
+        <!-- 1. Total Sales -->
+        <div class="col-md-3">
+          <div class="card bg-primary text-white shadow-sm h-100">
+            <div class="card-body">
+              <h2 class="fw-bold">Rs <span th:text="${totalBilled}"></span></h2>
+              <small>Total Sales (Gross)</small>
             </div>
-            <!-- 2. Discounts -->
-            <div class="col-md-3">
-                <div class="card bg-danger text-white shadow-sm h-100">
-                    <div class="card-body">
-                        <h2 class="fw-bold">Rs <span th:text="${totalDiscount}"></span></h2>
-                        <small>Discounts Given</small>
-                    </div>
-                </div>
-            </div>
-            <!-- 3. CASH IN HAND (Most Important) -->
-            <div class="col-md-3">
-                <div class="card bg-success text-white shadow h-100 border-0">
-                    <div class="card-body">
-                        <h2 class="fw-bold">Rs <span th:text="${cashCollected}"></span></h2>
-                        <small class="text-uppercase fw-bold">Net Cash In Drawer</small>
-                    </div>
-                </div>
-            </div>
-            <!-- 4. Receivables -->
-            <div class="col-md-3">
-                <div class="card bg-secondary text-white shadow-sm h-100">
-                    <div class="card-body">
-                        <h2 class="fw-bold">Rs <span th:text="${pending}"></span></h2>
-                        <small>Receivables (Pending)</small>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+        <!-- 2. Discounts -->
+        <div class="col-md-3">
+          <div class="card bg-danger text-white shadow-sm h-100">
+            <div class="card-body">
+              <h2 class="fw-bold">
+                Rs <span th:text="${totalDiscount}"></span>
+              </h2>
+              <small>Discounts Given</small>
+            </div>
+          </div>
+        </div>
+        <!-- 3. CASH IN HAND (Most Important) -->
+        <div class="col-md-3">
+          <div class="card bg-success text-white shadow h-100 border-0">
+            <div class="card-body">
+              <h2 class="fw-bold">
+                Rs <span th:text="${cashCollected}"></span>
+              </h2>
+              <small class="text-uppercase fw-bold">Net Cash In Drawer</small>
+            </div>
+          </div>
+        </div>
+        <!-- 4. Receivables -->
+        <div class="col-md-3">
+          <div class="card bg-secondary text-white shadow-sm h-100">
+            <div class="card-body">
+              <h2 class="fw-bold">Rs <span th:text="${pending}"></span></h2>
+              <small>Receivables (Pending)</small>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <!-- DETAILED TABLE -->
-        <div class="card shadow">
-            <div class="card-header bg-dark text-white d-flex justify-content-between">
-                <span>Transaction Log</span>
-                <button onclick="window.print()" class="btn btn-sm btn-light text-dark">🖨 Print Report</button>
-            </div>
-            <div class="card-body p-0">
-                <table class="table table-striped table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Time</th>
-                            <th>Patient</th>
-                            <th>Total</th>
-                            <th>Disc</th>
-                            <th>Paid</th>
-                            <th>Due</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="ord : ${orders}">
-                            <td th:text="'#' + ${ord.id}"></td>
-                            <td th:text="${#temporals.format(ord.orderDate, 'HH:mm')}"></td>
-                            <td th:text="${ord.patient.fullName}"></td>
-                            <td th:text="${ord.totalAmount}"></td>
-                            <td th:text="${ord.discountAmount}" class="text-danger"></td>
-                            <td th:text="${ord.paidAmount}" class="fw-bold text-success"></td>
-                            <td th:text="${ord.balanceDue}"
-                                th:class="${ord.balanceDue > 0} ? 'text-danger fw-bold' : 'text-muted'"></td>
-                        </tr>
-                        <tr th:if="${orders.empty}">
-                            <td colspan="7" class="text-center p-4">No transactions recorded today.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+      <!-- DETAILED TABLE -->
+      <div class="card shadow">
+        <div
+          class="card-header bg-dark text-white d-flex justify-content-between"
+        >
+          <span>Transaction Log</span>
+          <button
+            onclick="window.print()"
+            class="btn btn-sm btn-light text-dark"
+          >
+            🖨 Print Report
+          </button>
         </div>
+        <div class="card-body p-0">
+          <table class="table table-striped table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Time</th>
+                <th>Patient</th>
+                <th>Total</th>
+                <th>Disc</th>
+                <th>Paid</th>
+                <th>Due</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="ord : ${orders}">
+                <td th:text="'#' + ${ord.id}"></td>
+                <td th:text="${#temporals.format(ord.orderDate, 'HH:mm')}"></td>
+                <td th:text="${ord.patient.fullName}"></td>
+                <td th:text="${ord.totalAmount}"></td>
+                <td th:text="${ord.discountAmount}" class="text-danger"></td>
+                <td
+                  th:text="${ord.paidAmount}"
+                  class="fw-bold text-success"
+                ></td>
+                <td
+                  th:text="${ord.balanceDue}"
+                  th:class="${ord.balanceDue > 0} ? 'text-danger fw-bold' : 'text-muted'"
+                ></td>
+              </tr>
+              <tr th:if="${orders.empty}">
+                <td colspan="7" class="text-center p-4">
+                  No transactions recorded today.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-
-</body>
-
+  </body>
 </html>

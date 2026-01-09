@@ -1,167 +1,177 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>Pathology Report</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
     <style>
-        /* Print Styling */
-        @media print {
-            .no-print {
-                display: none;
-            }
+      /* Print Styling */
+      @media print {
+        .no-print {
+          display: none;
+        }
 
-            body {
-                background: white;
-                -webkit-print-color-adjust: exact; /* For Chrome/Safari */
-                print-color-adjust: exact;         /* Standard property */
-
-            }
-
-            .report-box {
-                border: none !important;
-                box-shadow: none !important;
-                margin: 0;
-            }
+        body {
+          background: white;
+          -webkit-print-color-adjust: exact; /* For Chrome/Safari */
+          print-color-adjust: exact; /* Standard property */
         }
 
         .report-box {
-            max-width: 800px;
-            margin: 30px auto;
-            background: white;
-            padding: 40px;
-            min-height: 1000px;
-            /* A4 Height approx */
+          border: none !important;
+          box-shadow: none !important;
+          margin: 0;
         }
+      }
 
-        .header-line {
-            border-bottom: 2px solid #0d6efd;
-            margin-bottom: 20px;
-        }
+      .report-box {
+        max-width: 800px;
+        margin: 30px auto;
+        background: white;
+        padding: 40px;
+        min-height: 1000px;
+        /* A4 Height approx */
+      }
+
+      .header-line {
+        border-bottom: 2px solid #0d6efd;
+        margin-bottom: 20px;
+      }
     </style>
-</head>
+  </head>
 
-<body class="bg-secondary">
-
+  <body class="bg-secondary">
     <div class="container">
+      <!-- The A4 Page -->
+      <div class="report-box shadow">
+        <!-- 1. Header -->
+        <div class="row align-items-center mb-4 header-line pb-3">
+          <div class="col-8">
+            <h1 class="text-primary fw-bold" th:text="${info.labName}"></h1>
+            <p class="mb-0 text-muted" th:text="${info.tagLine}"></p>
+          </div>
+          <div class="col-4 text-end">
+            <p class="mb-0">
+              <strong>Ph:</strong> <span th:text="${info.phoneNumber}"></span>
+            </p>
+            <p class="mb-0" th:text="${info.city}"></p>
+            <p class="mb-0 small text-muted" th:text="${info.email}"></p>
+            <p class="mb-0 small text-muted" th:text="${info.website}"></p>
+          </div>
+        </div>
 
-        <!-- The A4 Page -->
-        <div class="report-box shadow">
-
-            <!-- 1. Header -->
-            <div class="row align-items-center mb-4 header-line pb-3">
-                <div class="col-8">
-                    <h1 class="text-primary fw-bold" th:text="${info.labName}"></h1>
-                    <p class="mb-0 text-muted" th:text="${info.tagLine}"></p>
-                </div>
-                <div class="col-4 text-end">
-                    <p class="mb-0"><strong>Ph:</strong> <span th:text="${info.phoneNumber}"></span></p>
-                    <p class="mb-0" th:text="${info.city}"></p>
-                    <p class="mb-0 small text-muted" th:text="${info.email}"></p>
-                    <p class="mb-0 small text-muted" th:text="${info.website}"></p>
-                </div>
-                
-            </div>
-
-            <!-- 2. Patient Demographics -->
-            <div class="row mb-4 small">
-                <div class="col-md-6">
-                    <table class="table table-borderless table-sm">
-                        <tr>
-                            <td class="text-muted">Patient Name:</td>
-                            <td class="fw-bold" th:text="${order.patient.fullName}"></td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Age / Gender:</td>
-                            <td th:text="${order.patient.age} + ' Y / ' + ${order.patient.gender}"></td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">MRN:</td>
-                            <td th:text="${order.patient.mrn}"></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <table class="table table-borderless table-sm">
-                        <tr>
-                            <td class="text-muted">Date:</td>
-                            <td th:text="${#temporals.format(order.orderDate, 'dd-MMM-yyyy HH:mm')}"></td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Ref By:</td>
-                            <td th:text="${order.referringDoctor != null ? order.referringDoctor.name : 'Self'}"></td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Status:</td>
-                            <td class="fw-bold">Final Report</td>
-                        </tr>
-
-                    </table>
-                </div>
-            </div>
-
-            <!-- 3. Results Table -->
-            <h5 class="text-uppercase border-bottom mb-3">Laboratory Investigations</h5>
-
-            <table class="table table-striped">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 35%">Test Name</th>
-                        <th style="width: 25%">Result</th>
-                        <th style="width: 15%">Unit</th>
-                        <th style="width: 25%">Reference Range</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="res : ${order.results}">
-                        <!-- Test Name -->
-                        <td th:text="${res.testDefinition.testName}" class="fw-bold"></td>
-
-                        <!-- Result Value (Highlight RED if abnormal) -->
-                        <td>
-                            <span th:text="${res.resultValue}"
-                                th:class="${res.isAbnormal} ? 'fw-bold text-danger' : 'fw-bold text-dark'">
-                            </span>
-                            <!-- Show H/L flag -->
-                            <span th:if="${res.isAbnormal}" class="badge bg-danger ms-2"
-                                th:text="${res.remarks}"></span>
-                        </td>
-
-                        <!-- Unit -->
-                        <td th:text="${res.testDefinition.unit}"></td>
-
-                        <!-- Range -->
-                        <td>
-                            <span th:if="${res.testDefinition.minRange != null}" class="small text-muted">
-                                <span th:text="${res.testDefinition.minRange}"></span> -
-                                <span th:text="${res.testDefinition.maxRange}"></span>
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
+        <!-- 2. Patient Demographics -->
+        <div class="row mb-4 small">
+          <div class="col-md-6">
+            <table class="table table-borderless table-sm">
+              <tr>
+                <td class="text-muted">Patient Name:</td>
+                <td class="fw-bold" th:text="${order.patient.fullName}"></td>
+              </tr>
+              <tr>
+                <td class="text-muted">Age / Gender:</td>
+                <td
+                  th:text="${order.patient.age} + ' Y / ' + ${order.patient.gender}"
+                ></td>
+              </tr>
+              <tr>
+                <td class="text-muted">MRN:</td>
+                <td th:text="${order.patient.mrn}"></td>
+              </tr>
             </table>
-
-            <!-- 4. Footer -->
-            <div class="mt-5 pt-5 text-center">
-                <p class="text-muted small">
-                    Digitally verified
-
-                </p>
-                <div class="mt-4">
-                    <img th:src="'data:image/png;base64,' + ${qrImage}" alt="QR Code" width="100">
-                </div>
-            </div>
-
+          </div>
+          <div class="col-md-6">
+            <table class="table table-borderless table-sm">
+              <tr>
+                <td class="text-muted">Date:</td>
+                <td
+                  th:text="${#temporals.format(order.orderDate, 'dd-MMM-yyyy HH:mm')}"
+                ></td>
+              </tr>
+              <tr>
+                <td class="text-muted">Ref By:</td>
+                <td
+                  th:text="${order.referringDoctor != null ? order.referringDoctor.name : 'Self'}"
+                ></td>
+              </tr>
+              <tr>
+                <td class="text-muted">Status:</td>
+                <td class="fw-bold">Final Report</td>
+              </tr>
+            </table>
+          </div>
         </div>
 
-        <!-- Buttons -->
-        <div class="text-center no-print mb-5 pb-5">
-            <button onclick="window.print()" class="btn btn-primary btn-lg">🖨 Print Report</button>
-            <a href="/lab/worklist" class="btn btn-dark btn-lg">Back to Lab</a>
-        </div>
+        <!-- 3. Results Table -->
+        <h5 class="text-uppercase border-bottom mb-3">
+          Laboratory Investigations
+        </h5>
 
+        <table class="table table-striped">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 35%">Test Name</th>
+              <th style="width: 25%">Result</th>
+              <th style="width: 15%">Unit</th>
+              <th style="width: 25%">Reference Range</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="res : ${order.results}">
+              <!-- Test Name -->
+              <td th:text="${res.testDefinition.testName}" class="fw-bold"></td>
+
+              <!-- Result Value (Highlight RED if abnormal) -->
+              <td>
+                <span
+                  th:text="${res.resultValue}"
+                  th:class="${res.isAbnormal} ? 'fw-bold text-danger' : 'fw-bold text-dark'"
+                >
+                </span>
+                <!-- Show H/L flag -->
+                <span
+                  th:if="${res.isAbnormal}"
+                  class="badge bg-danger ms-2"
+                  th:text="${res.remarks}"
+                ></span>
+              </td>
+
+              <!-- Unit -->
+              <td th:text="${res.testDefinition.unit}"></td>
+
+              <!-- Range -->
+              <td>
+                <span
+                  th:if="${res.testDefinition.minRange != null}"
+                  class="small text-muted"
+                >
+                  <span th:text="${res.testDefinition.minRange}"></span> -
+                  <span th:text="${res.testDefinition.maxRange}"></span>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- 4. Footer -->
+        <div class="mt-5 pt-5 text-center">
+          <p class="text-muted small">Digitally verified</p>
+          <div class="mt-4">
+            <img
+              th:src="'data:image/png;base64,' + ${qrImage}"
+              alt="QR Code"
+              width="100"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="text-center no-print mb-5 pb-5">
+        <button onclick="window.print()" class="btn btn-primary btn-lg">
+          🖨 Print Report
+        </button>
+        <a href="/lab/worklist" class="btn btn-dark btn-lg">Back to Lab</a>
+      </div>
     </div>
-
-</body>
-
+  </body>
 </html>

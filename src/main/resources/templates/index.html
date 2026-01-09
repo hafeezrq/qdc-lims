@@ -1,78 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>QDC-LIMS Login</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
     <style>
-        body {
-            background-color: #f0f2f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+      body {
+        background-color: #f0f2f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
 
-        .role-card {
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
+      .role-card {
+        transition: transform 0.2s;
+        cursor: pointer;
+      }
 
-        .role-card:hover {
-            transform: scale(1.05);
-        }
+      .role-card:hover {
+        transform: scale(1.05);
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div class="container text-center">
-        <h1 class="mb-5 text-primary fw-bold" style="letter-spacing: 2px;">
-            <span th:text="${labInfo.labName}">LIMS SYSTEM</span>
-        </h1>
-        <p class="text-muted mb-5">Select your role to continue (Security Disabled)</p>
+      <h1 class="mb-5 text-primary fw-bold" style="letter-spacing: 2px">
+        <span th:text="${labInfo.labName}">LIMS SYSTEM</span>
+      </h1>
+      <p class="text-muted mb-5">
+        Select your role to continue (Security Disabled)
+      </p>
 
-        <div class="row justify-content-center">
-
-            <!-- RECEPTION -->
-            <div class="col-md-3">
-                <a href="/reception/dashboard" class="text-decoration-none">
-                    <div class="card shadow role-card border-primary">
-                        <div class="card-body py-5">
-                            <h1 class="display-4">👋</h1>
-                            <h4 class="mt-3 text-primary">Reception</h4>
-                        </div>
-                    </div>
-                </a>
+      <div class="row justify-content-center">
+        <!-- RECEPTION -->
+        <div class="col-md-3">
+          <a href="/reception/dashboard" class="text-decoration-none">
+            <div class="card shadow role-card border-primary">
+              <div class="card-body py-5">
+                <h1 class="display-4">👋</h1>
+                <h4 class="mt-3 text-primary">Reception</h4>
+              </div>
             </div>
-
-            <!-- LAB -->
-            <div class="col-md-3">
-                <a href="/lab/worklist" class="text-decoration-none">
-                    <div class="card shadow role-card border-danger">
-                        <div class="card-body py-5">
-                            <h1 class="display-4">🧪</h1>
-                            <h4 class="mt-3 text-danger">Laboratory</h4>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- ADMIN -->
-            <div class="col-md-3">
-                <a href="/admin/dashboard" class="text-decoration-none">
-                    <div class="card shadow role-card border-dark">
-                        <div class="card-body py-5">
-                            <h1 class="display-4">⚙️</h1>
-                            <h4 class="mt-3 text-dark">Admin / Manager</h4>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
+          </a>
         </div>
+
+        <!-- LAB -->
+        <div class="col-md-3">
+          <a href="/lab/worklist" class="text-decoration-none">
+            <div class="card shadow role-card border-danger">
+              <div class="card-body py-5">
+                <h1 class="display-4">🧪</h1>
+                <h4 class="mt-3 text-danger">Laboratory</h4>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- ADMIN -->
+        <div class="col-md-3">
+          <a href="/admin/dashboard" class="text-decoration-none">
+            <div class="card shadow role-card border-dark">
+              <div class="card-body py-5">
+                <h1 class="display-4">⚙️</h1>
+                <h4 class="mt-3 text-dark">Admin / Manager</h4>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
     </div>
-
-</body>
-
+  </body>
 </html>
