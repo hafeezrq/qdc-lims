@@ -35,7 +35,7 @@
             <a href="/lab/worklist" class="btn btn-outline-danger btn-sm">Back to Worklist</a>
         </div>
 
-        <div class="card shadow">
+        <div class="card shadow" th:if="${errorMessage == null}">
             <div class="card-body">
 
                 <form th:action="@{/lab/save-results}" th:object="${order}" method="post">

@@ -40,6 +40,15 @@ public class LabController {
     @GetMapping("/lab/enter-results/{id}")
     public String enterResultsPage(@PathVariable Long id, Model model) {
         LabOrder order = orderRepo.findById(id).orElseThrow();
+        // --- CHECK: Block access to the form if delivered ---
+        if (order.isReportDelivered()) {
+            model.addAttribute("errorMessage", "⛔ SECURITY LOCK: Report delivered. Editing is forbidden.");
+            // We still send the 'order' object so the HTML doesn't crash,
+            // but we will hide the form in the next step.
+            model.addAttribute("order", order);
+            return "lab-entry";
+        }
+
         model.addAttribute("order", order);
         return "lab-entry";
     }
