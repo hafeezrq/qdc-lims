@@ -56,12 +56,20 @@ public class SupplierController {
     }
 
     // 5. API to Save Purchase (Called via JavaScript/Axios)
-    @org.springframework.web.bind.annotation.ResponseBody // Important for JSON
+    @org.springframework.web.bind.annotation.ResponseBody
     @PostMapping("/api/suppliers/purchase")
-    public org.springframework.http.ResponseEntity<String> savePurchase(
+    public org.springframework.http.ResponseEntity<?> savePurchase(
             @org.springframework.web.bind.annotation.RequestBody com.qdc.lims.dto.PurchaseRequest request) {
-        purchaseService.processPurchase(request);
-        return org.springframework.http.ResponseEntity.ok("Saved");
+        try {
+            purchaseService.processPurchase(request);
+            return org.springframework.http.ResponseEntity.ok("Saved");
+        } catch (RuntimeException e) {
+            // Send the specific error message (e.g. "Duplicate Invoice") back to the
+            // browser
+            return org.springframework.http.ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
     }
 
     // 6. View Supplier Ledger (Statement)

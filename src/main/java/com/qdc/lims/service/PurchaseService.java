@@ -25,6 +25,18 @@ public class PurchaseService {
 
     @Transactional
     public void processPurchase(PurchaseRequest request) {
+        // --- 1. VALIDATION CHECK ---
+        // If Invoice Number is provided, check for duplicates for THIS supplier
+        if (request.invoiceNumber() != null && !request.invoiceNumber().trim().isEmpty()) {
+            boolean exists = ledgerRepo.existsBySupplierIdAndInvoiceNumber(
+                    request.supplierId(),
+                    request.invoiceNumber());
+
+            if (exists) {
+                throw new RuntimeException("Duplicate Invoice: This invoice number already exists for this supplier.");
+            }
+        }
+
         Supplier supplier = supplierRepo.findById(request.supplierId()).orElseThrow();
         double totalBill = 0.0;
 

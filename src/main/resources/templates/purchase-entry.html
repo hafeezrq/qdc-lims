@@ -190,7 +190,13 @@
                 window.location.href = "/admin/dashboard";
             }).catch(err => {
                 console.error(err);
-                alert("Error saving purchase.");
+                if (err.response && err.response.data) {
+                    // Show the specific message from Java (e.g., "Duplicate Invoice...")
+                    alert("Error: " + err.response.data);
+                } else {
+                    alert("Error saving purchase. Check console.");
+                }
+
             });
         }
 
