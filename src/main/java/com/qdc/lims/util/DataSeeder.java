@@ -128,19 +128,19 @@ public class DataSeeder implements CommandLineRunner {
         patientService.registerPatient(p2);
 
         // --- F. LAB SETTINGS (Default) ---
-        if (labInfoRepo.count() == 0) {
-            LabInfo info = new LabInfo();
-            info.setId(1L);
-            info.setLabName("MY PATHOLOGY LAB");
-            info.setAddress("123 Main Street");
-            info.setCity("Lahore");
-            info.setPhoneNumber("0300-0000000");
-            info.setTagLine("Excellence in Diagnostics");
-            info.setEmail("contact@mylab.com");
-            info.setWebsite("www.mylab.com");
+        // if (labInfoRepo.count() == 0) {
+        // LabInfo info = new LabInfo();
+        // info.setId(1L);
+        // info.setLabName("MY PATHOLOGY LAB");
+        // info.setAddress("123 Main Street");
+        // info.setCity("Lahore");
+        // info.setPhoneNumber("0300-0000000");
+        // info.setTagLine("Excellence in Diagnostics");
+        // info.setEmail("contact@mylab.com");
+        // info.setWebsite("www.mylab.com");
 
-            labInfoRepo.save(info);
-        }
+        // labInfoRepo.save(info);
+        // }
 
         System.out.println("✅ Seeding Complete! System ready.");
     }
