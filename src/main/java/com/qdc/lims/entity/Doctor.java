@@ -22,4 +22,7 @@ public class Doctor {
     // This is the PRIVATE rate (e.g., 10.0 for 10%)
     // The Receptionist UI will NOT show this field.
     private Double commissionPercentage = 0.0;
+
+    @Column(nullable = false)
+    private boolean active = true;
 }

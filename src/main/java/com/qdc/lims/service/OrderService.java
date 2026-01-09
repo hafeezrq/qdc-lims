@@ -71,6 +71,11 @@ public class OrderService {
 
                 // Subtract Stock
                 double newStock = item.getCurrentStock() - ingredient.getQuantity();
+                if (newStock < 0) {
+                    throw new RuntimeException(
+                            "❌ OUT OF STOCK: Not enough " + item.getItemName() + " to book this test.");
+                }
+
                 item.setCurrentStock(newStock);
 
                 // Save updated stock

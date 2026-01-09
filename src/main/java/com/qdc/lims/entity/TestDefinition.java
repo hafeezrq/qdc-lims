@@ -26,5 +26,8 @@ public class TestDefinition {
 
     private String department;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     // MAKE SURE THERE ARE NO INVENTORY FIELDS HERE!
 }

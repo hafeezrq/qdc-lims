@@ -20,4 +20,7 @@ public class Supplier {
     private String mobile;
 
     private String address;
+
+    @Column(nullable = false)
+    private boolean active = true;
 }
