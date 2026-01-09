@@ -42,9 +42,8 @@
                             <td th:text="${sup.address}" class="text-muted small"></td>
 
                             <td>
-                                <button class="btn btn-sm btn-outline-primary" disabled>
-                                    📜 View Ledger
-                                </button>
+                                <a th:href="@{/admin/suppliers/ledger/{id}(id=${sup.id})}" class="btn btn-sm btn-outline-primary">
+                                    📜 View Ledger                            </a>
                             </td>
                         </tr>
                         <tr th:if="${suppliers.empty}">

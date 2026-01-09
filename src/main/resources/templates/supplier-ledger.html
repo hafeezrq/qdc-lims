@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Supplier Statement</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-4">
+
+        <!-- Header / Navigation -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-primary">
+                    <i class="fas fa-file-invoice-dollar me-2"></i> Account Statement
+                </h3>
+                <h5 class="text-dark" th:text="${supplier.companyName}"></h5>
+                <small class="text-muted" th:text="${supplier.contactPerson} + ' | ' + ${supplier.mobile}"></small>
+            </div>
+            <div>
+                <a href="/admin/suppliers/purchase" class="btn btn-success">+ New Purchase</a>
+                <a href="/admin/suppliers/list" class="btn btn-outline-secondary">Back to List</a>
+            </div>
+        </div>
+
+        <!-- Financial Summary Cards -->
+        <div class="row text-center mb-4">
+            <div class="col-md-4">
+                <div class="card bg-white shadow-sm border-start border-4 border-primary">
+                    <div class="card-body">
+                        <h4 class="text-primary fw-bold" th:text="${totalBilled}">0.0</h4>
+                        <small class="text-muted">Total Purchased</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-white shadow-sm border-start border-4 border-success">
+                    <div class="card-body">
+                        <h4 class="text-success fw-bold" th:text="${totalPaid}">0.0</h4>
+                        <small class="text-muted">Total Paid</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Logic: Red if we owe money, Green if zero/advance -->
+                <div class="card text-white shadow" th:classappend="${balance > 0 ? 'bg-danger' : 'bg-success'}">
+                    <div class="card-body">
+                        <h3 class="fw-bold">Rs <span th:text="${balance}">0.0</span></h3>
+                        <small class="text-uppercase fw-bold">Current Balance Payable</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Table -->
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white d-flex justify-content-between">
+                <span>Transaction History</span>
+                <button onclick="window.print()" class="btn btn-sm btn-light">🖨 Print Statement</button>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Ref #</th>
+                            <th class="text-end">Bill Amount (Credit)</th>
+                            <th class="text-end">Paid Amount (Debit)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="txn : ${transactions}">
+                            <td th:text="${txn.transactionDate}"></td>
+                            <td th:text="${txn.description}"></td>
+                            <td><span class="badge bg-light text-dark border" th:text="${txn.invoiceNumber}"></span>
+                            </td>
+
+                            <!-- Bill Column -->
+                            <td class="text-end fw-bold text-danger">
+                                <span th:if="${txn.billAmount > 0}" th:text="${txn.billAmount}"></span>
+                                <span th:if="${txn.billAmount == 0}" class="text-muted">-</span>
+                            </td>
+
+                            <!-- Paid Column -->
+                            <td class="text-end fw-bold text-success">
+                                <span th:if="${txn.paidAmount > 0}" th:text="${txn.paidAmount}"></span>
+                                <span th:if="${txn.paidAmount == 0}" class="text-muted">-</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${transactions.empty}">
+                            <td colspan="5" class="text-center py-4 text-muted">No history available for this supplier.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

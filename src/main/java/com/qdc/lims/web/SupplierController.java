@@ -19,6 +19,8 @@ public class SupplierController {
     private com.qdc.lims.repository.InventoryItemRepository inventoryRepo;
     @Autowired
     private com.qdc.lims.service.PurchaseService purchaseService;
+    @Autowired
+    private com.qdc.lims.repository.SupplierLedgerRepository ledgerRepo;
 
     public SupplierController(SupplierRepository supplierRepo) {
         this.supplierRepo = supplierRepo;
@@ -60,6 +62,30 @@ public class SupplierController {
             @org.springframework.web.bind.annotation.RequestBody com.qdc.lims.dto.PurchaseRequest request) {
         purchaseService.processPurchase(request);
         return org.springframework.http.ResponseEntity.ok("Saved");
+    }
+
+    // 6. View Supplier Ledger (Statement)
+    @GetMapping("/admin/suppliers/ledger/{id}")
+    public String viewLedger(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+        // 1. Get Supplier
+        Supplier supplier = supplierRepo.findById(id).orElseThrow();
+
+        // 2. Get History (Newest first)
+        java.util.List<com.qdc.lims.entity.SupplierLedger> transactions = ledgerRepo
+                .findBySupplierIdOrderByTransactionDateDesc(id);
+
+        // 3. Calculate Totals
+        double totalBilled = transactions.stream().mapToDouble(l -> l.getBillAmount()).sum();
+        double totalPaid = transactions.stream().mapToDouble(l -> l.getPaidAmount()).sum();
+        double balance = totalBilled - totalPaid;
+
+        model.addAttribute("supplier", supplier);
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("totalBilled", totalBilled);
+        model.addAttribute("totalPaid", totalPaid);
+        model.addAttribute("balance", balance);
+
+        return "supplier-ledger";
     }
 
 }
