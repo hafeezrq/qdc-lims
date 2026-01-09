@@ -65,18 +65,26 @@ public class MainWebController {
     }
 
     @PostMapping("/setup")
-    public String saveInitialSetup(@ModelAttribute LabInfo labInfo, @RequestParam String adminUsername,
-            @RequestParam String adminPassword) {
+    public String saveInitialSetup(@ModelAttribute LabInfo labInfo, 
+                                   @RequestParam String adminUsername, 
+                                   @RequestParam String adminPassword,
+                                   Model model) { // <--- Added Model here
+        
+        // --- VALIDATION ---
+        if (adminPassword.length() < 8 || !adminPassword.matches(".*\\d.*")) {
+            model.addAttribute("isFirstRun", true);
+            model.addAttribute("errorMessage", "Password too weak. Min 8 chars + 1 number.");
+            return "settings"; // Go back
+        }
+        // ------------------
 
-        // 1. Save Lab Info
         labInfo.setId(1L);
         labInfoRepo.save(labInfo);
 
-        // 2. Create the Super Admin User
         if (userRepo.count() == 0) {
             com.qdc.lims.entity.User admin = new com.qdc.lims.entity.User();
             admin.setUsername(adminUsername);
-            admin.setPassword(passwordEncoder.encode(adminPassword)); // Encrypt!
+            admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setRole("ROLE_ADMIN");
             admin.setFullName("System Administrator");
             userRepo.save(admin);
@@ -269,10 +277,31 @@ public class MainWebController {
 
     // 20. Save New User
     @PostMapping("/admin/users")
-    public String saveUser(@ModelAttribute com.qdc.lims.entity.User user) {
-        // Encrypt the password before saving!
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setActive(true); // Default to active
+    public String saveUser(@ModelAttribute com.qdc.lims.entity.User user, Model model) {
+        
+        // --- 1. PASSWORD VALIDATION ---
+        String rawPassword = user.getPassword();
+        // Check: Length < 8 OR Does not contain a digit
+        if (rawPassword.length() < 8 || !rawPassword.matches(".*\\d.*")) {
+            // Reload the list (so the page doesn't look empty) and show error
+            model.addAttribute("users", userRepo.findAll());
+            // Send back the user object so they don't have to re-type everything
+            model.addAttribute("newUser", user); 
+            model.addAttribute("errorMessage", "Error: Password must be 8+ chars and contain a number.");
+            return "users-list"; // Stay on page
+        }
+        // ------------------------------
+
+        // 2. Check Username Duplicate
+        if (userRepo.findByUsername(user.getUsername()).isPresent()) {
+             model.addAttribute("users", userRepo.findAll());
+             model.addAttribute("newUser", user);
+             model.addAttribute("errorMessage", "Error: Username already exists.");
+             return "users-list";
+        }
+
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setActive(true);
         userRepo.save(user);
         return "redirect:/admin/users?success=true";
     }

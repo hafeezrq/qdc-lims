@@ -27,6 +27,11 @@
               Create Staff Account
             </div>
             <div class="card-body">
+              <!-- Error Message -->
+              <div th:if="${errorMessage}" class="alert alert-danger shadow-sm">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span th:text="${errorMessage}"></span>
+              </div>
               <form
                 th:action="@{/admin/users}"
                 th:object="${newUser}"
@@ -60,8 +65,14 @@
                     type="password"
                     th:field="*{password}"
                     class="form-control"
+                    placeholder="Min 8 chars, 1 number"
+                    pattern="^(?=.*[0-9]).{8,}$"
+                    title="Password must be at least 8 characters long and contain at least one number."
                     required
                   />
+                  <div class="form-text text-muted small">
+                    Min 8 chars, must include a number.
+                  </div>
                 </div>
 
                 <div class="mb-3">

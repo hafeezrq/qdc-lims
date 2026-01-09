@@ -41,7 +41,10 @@
               Please configure your lab details to get started.
             </p>
           </div>
-
+          <div th:if="${errorMessage}" class="alert alert-danger shadow-sm">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span th:text="${errorMessage}"></span>
+          </div>
           <div class="card shadow">
             <div class="card-header bg-primary text-white">Lab Details</div>
             <div class="card-body">
@@ -85,6 +88,8 @@
                         name="adminPassword"
                         class="form-control"
                         placeholder="******"
+                        pattern="^(?=.*[0-9]).{8,}$"
+                        title="Password must be at least 8 characters long and contain at least one number."
                         required
                       />
                     </div>
