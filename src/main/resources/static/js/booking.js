@@ -120,7 +120,12 @@ function submitOrder() {
         window.location.href = "/orders/receipt/" + orderId;
     }).catch(error => {
         console.error(error);
-        alert("Error booking order.");
+        if (error.response && error.response.data) {
+            // Show the specific "Out of Stock" message from Java
+            alert(error.response.data);
+        } else {
+            alert("Error booking order. Check console.");
+        }
         btn.disabled = false;
         btn.innerText = "Confirm & Print";
     });

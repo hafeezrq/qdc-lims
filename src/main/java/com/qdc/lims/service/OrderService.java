@@ -69,6 +69,18 @@ public class OrderService {
             for (TestConsumption ingredient : recipe) {
                 InventoryItem item = ingredient.getItem();
 
+                double needed = ingredient.getQuantity();
+                double available = item.getCurrentStock();
+
+                // --- THE GUARD CHECK ---
+                if (available < needed) {
+                    throw new RuntimeException(
+                            "❌ OUT OF STOCK: Test '" + test.getTestName() + "' requires "
+                                    + needed + " " + item.getUnit() + " of '" + item.getItemName() + "', "
+                                    + "but only " + available + " is available.");
+                }
+                // -----------------------
+
                 // Subtract Stock
                 double newStock = item.getCurrentStock() - ingredient.getQuantity();
                 if (newStock < 0) {

@@ -17,13 +17,19 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<LabOrder> createOrder(@RequestBody OrderRequest request) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderRequest request) {
         try {
             LabOrder order = service.createOrder(request);
             return ResponseEntity.ok(order);
+        } catch (RuntimeException e) {
+            // Return 400 Bad Request with the specific error message text
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.internalServerError().body("System Error");
         }
     }
+
 }
