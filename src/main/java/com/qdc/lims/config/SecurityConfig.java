@@ -19,30 +19,40 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((requests) -> requests
-                        // 1. Public Pages (Setup, Static Files)
-                        .requestMatchers("/setup", "/login", "/css/**", "/js/**", "/webfonts/**", "/images/**")
-                        .permitAll()
+            .authorizeHttpRequests((requests) -> requests
+                // 1. PUBLIC ACCESS: 
+                // We allow "/" (The Cards), "/setup" (First Run), and all static assets (CSS/JS)
+                .requestMatchers("/", "/index", "/setup", "/login", "/css/**", "/js/**", "/webfonts/**", "/images/**").permitAll()
+                
+                // 2. RESTRICTED ACCESS (The Doors):
+                // If you click these links, Spring will stop you and ask for a password
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/lab/**").hasAnyRole("LAB", "ADMIN")
+                .requestMatchers("/reception/**").hasAnyRole("RECEPTION", "ADMIN")
+                .requestMatchers("/api/**").authenticated()
+                
+                // 3. Catch-all: Anything else requires login
+                .anyRequest().authenticated()
+            )
+            .formLogin((form) -> form
+                .loginPage("/login") // Custom Login Page
+                // --- FIX 1: Handle Wrong Password ---
+                // If login fails, go back to /login?error=true
+                .failureUrl("/login?error=true") 
 
-                        // 2. Role Based Access
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/lab/**").hasAnyRole("LAB", "ADMIN")
-                        .requestMatchers("/reception/**").hasAnyRole("RECEPTION", "ADMIN")
-
-                        // 3. API Access (Booking)
-                        .requestMatchers("/api/**").authenticated()
-
-                        // 4. Everything else requires login
-                        .anyRequest().authenticated())
-                .formLogin((form) -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .permitAll())
-                .logout((logout) -> logout.permitAll())
-
-                // --- FIX IS HERE ---
-                .csrf(csrf -> csrf.disable());
-        // -------------------
+                .permitAll()
+            )
+            .logout((logout) -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/") // <--- Go back to Cards after logout
+                .permitAll()
+            )
+            // --- FIX 2: Handle Wrong Role (403) ---
+                .exceptionHandling((ex) -> ex
+                .accessDeniedPage("/access-denied") 
+            )
+        
+            .csrf(csrf -> csrf.disable()); // Standard for non-browser clients or simple forms
 
         return http.build();
     }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Access Denied</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/all.min.css" rel="stylesheet" />
+  </head>
+  <body
+    class="bg-light d-flex align-items-center justify-content-center"
+    style="height: 100vh"
+  >
+    <div class="text-center">
+      <h1 class="display-1 fw-bold text-danger">403</h1>
+      <h2 class="mb-3">Access Denied</h2>
+      <p class="text-muted mb-4 lead">
+        You do not have permission to view this page.
+      </p>
+
+      <div class="d-flex justify-content-center gap-3">
+        <!-- Back Button -->
+        <a
+          href="javascript:history.back()"
+          class="btn btn-outline-secondary btn-lg"
+        >
+          &larr; Go Back
+        </a>
+
+        <!-- Home Button -->
+        <a href="/" class="btn btn-primary btn-lg">
+          <i class="fas fa-home me-2"></i> Return to Portal
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

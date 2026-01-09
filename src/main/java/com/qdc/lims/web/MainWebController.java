@@ -276,4 +276,10 @@ public class MainWebController {
         userRepo.save(user);
         return "redirect:/admin/users?success=true";
     }
+
+    // 21. Friendly Access Denied Page
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "access-denied"; 
+    }
 }
