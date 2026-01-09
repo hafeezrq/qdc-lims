@@ -8,6 +8,7 @@ import com.qdc.lims.repository.*;
 import com.qdc.lims.service.PatientService;
 import com.qdc.lims.util.QrCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,11 @@ public class MainWebController {
     private LabOrderRepository orderRepo;
     @Autowired
     private LabInfoRepository labInfoRepo; // Settings Repo
+    @Autowired
+    private UserRepository userRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private SupplierRepository supplierRepo; // Supplier Repo
 
@@ -59,10 +65,24 @@ public class MainWebController {
     }
 
     @PostMapping("/setup")
-    public String saveInitialSetup(@ModelAttribute LabInfo labInfo) {
+    public String saveInitialSetup(@ModelAttribute LabInfo labInfo, @RequestParam String adminUsername,
+            @RequestParam String adminPassword) {
+
+        // 1. Save Lab Info
         labInfo.setId(1L);
         labInfoRepo.save(labInfo);
-        return "redirect:/";
+
+        // 2. Create the Super Admin User
+        if (userRepo.count() == 0) {
+            com.qdc.lims.entity.User admin = new com.qdc.lims.entity.User();
+            admin.setUsername(adminUsername);
+            admin.setPassword(passwordEncoder.encode(adminPassword)); // Encrypt!
+            admin.setRole("ROLE_ADMIN");
+            admin.setFullName("System Administrator");
+            userRepo.save(admin);
+        }
+
+        return "redirect:/login";
     }
 
     // ================= SETTINGS (EDIT MODE) =================

@@ -48,6 +48,25 @@
                         -->
                         <form th:action="${isFirstRun} ? @{/setup} : @{/settings}" th:object="${labInfo}" method="post">
 
+                            <!-- === NEW: ADMIN ACCOUNT SETUP (Only visible on First Run) === -->
+                            <div th:if="${isFirstRun}" class="bg-warning-subtle p-3 rounded mb-4 border border-warning">
+                                <h5 class="text-dark fw-bold"><i class="fas fa-user-shield"></i> Create Admin Account</h5>
+                                <p class="small text-muted mb-2">You will use this to log in.</p>
+                            
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="fw-bold">Username</label>
+                                        <!-- We use 'name' attribute to send this separately from 'labInfo' object -->
+                                        <input type="text" name="adminUsername" class="form-control" placeholder="admin" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="fw-bold">Password</label>
+                                        <input type="password" name="adminPassword" class="form-control" placeholder="******" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ============================================================ -->
+
                             <div class="mb-3">
                                 <label class="fw-bold">Lab Name</label>
                                 <input type="text" th:field="*{labName}" class="form-control"

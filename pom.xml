@@ -107,6 +107,18 @@
 			<artifactId>javase</artifactId>
 			<version>3.5.3</version>
 		</dependency>
+		<!-- Spring Security (The Guard) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- Thymeleaf Security Extras (To hide buttons based on role) -->
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
