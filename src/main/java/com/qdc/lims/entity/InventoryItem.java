@@ -20,4 +20,16 @@ public class InventoryItem {
     private Double minThreshold; // e.g., 50.0. If stock drops below this, ALERT!
 
     private String unit; // e.g., "pcs", "ml", "strips"
+
+    // --- NEW FIELDS FOR FINANCE ---
+
+    // The Weighted Average Cost (e.g. Rs 15.5 per unit)
+    // Updated automatically every time we buy stock.
+    private Double averageCost = 0.0;
+
+    // The "Soft Link" to suggest a supplier
+    @ManyToOne
+    @JoinColumn(name = "preferred_supplier_id")
+    private Supplier preferredSupplier;
+
 }

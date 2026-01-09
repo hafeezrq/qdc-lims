@@ -7,12 +7,17 @@ import lombok.Data;
 @Data
 @Table(name = "suppliers")
 public class Supplier {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String companyName; // "Ali Distributors"
-    private String contactPerson; // "Mr. Ali"
+    @Column(nullable = false)
+    private String companyName; // e.g. "Ali Distributors"
+
+    private String contactPerson; // e.g. "Mr. Ali"
+
     private String mobile;
+
     private String address;
 }

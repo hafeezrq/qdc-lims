@@ -8,20 +8,28 @@ import java.time.LocalDate;
 @Data
 @Table(name = "supplier_ledger")
 public class SupplierLedger {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "supplier_id")
+    @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
-    private LocalDate date;
-    private String description; // "Purchased 100 Glucose Kits"
+    private LocalDate transactionDate;
+
+    private String description; // e.g. "Inv-999 Purchase" or "Cash Payment"
+
+    private String invoiceNumber; // Optional, for cross-checking paper bills
 
     // Money Logic
-    private Double billAmount = 0.0; // Amount we owe them (Credit)
-    private Double paidAmount = 0.0; // Amount we paid them (Debit)
+    private Double billAmount = 0.0; // Money we OWE (Credit) - Increases Balance
+    private Double paidAmount = 0.0; // Money we PAID (Debit) - Decreases Balance
 
-    // We can calculate balance dynamically: SUM(bill) - SUM(paid)
+    @PrePersist
+    protected void onCreate() {
+        if (transactionDate == null)
+            transactionDate = LocalDate.now();
+    }
 }
