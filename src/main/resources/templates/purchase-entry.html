@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Purchase Entry</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/all.min.css" rel="stylesheet">
+    <script src="/js/axios.min.js"></script>
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>📦 Receive Stock (Purchase)</h3>
+            <a href="/admin/dashboard" class="btn btn-outline-secondary">Dashboard</a>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body">
+
+                <!-- Header Info -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="fw-bold">Select Supplier</label>
+                        <select id="supplierSelect" class="form-select">
+                            <option value="">-- Choose Vendor --</option>
+                            <option th:each="sup : ${suppliers}" th:value="${sup.id}" th:text="${sup.companyName}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Vendor Invoice #</label>
+                        <input type="text" id="invoiceNumber" class="form-control" placeholder="e.g. INV-9921">
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 40%">Item</th>
+                            <th style="width: 20%">Quantity</th>
+                            <th style="width: 20%">Cost Per Unit</th>
+                            <th style="width: 15%">Line Total</th>
+                            <th style="width: 5%"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        <!-- Rows will be added here by JS -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                <button onclick="addRow()" class="btn btn-outline-primary btn-sm fw-bold">+ Add Item
+                                    Row</button>
+                            </td>
+                        </tr>
+                        <tr class="table-secondary fw-bold fs-5">
+                            <td colspan="3" class="text-end">Grand Total Payable:</td>
+                            <td colspan="2">Rs <span id="grandTotal">0</span></td>
+                        </tr>
+                                                <!-- NEW: Immediate Payment Section -->
+                                                <tr class="bg-white">
+                                                    <td colspan="3" class="text-end align-middle">
+                                                        <label class="form-check-label me-2">Paid Now?</label>
+                                                        <input type="checkbox" id="paidFullCheckbox" onchange="togglePaidFull()">
+                                                        <small class="text-muted">(Check to pay full)</small>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" id="paidAmountInput" class="form-control border-success" placeholder="Amount Paid">
+                                                    </td>
+                                                    <td>
+                                                        <select id="paymentMode" class="form-select form-select-sm">
+                                                            <option value="Cash">Cash</option>
+                                                            <option value="Cheque">Cheque</option>
+                                                            <option value="Online">Online</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                        
+                    </tfoot>
+                </table>
+
+                <div class="text-end mt-4">
+                    <button onclick="submitPurchase()" class="btn btn-success btn-lg">
+                        ✅ Confirm Purchase & Update Stock
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Dropdown Options Logic -->
+    <select id="hiddenItemOptions" style="display:none">
+        <option value="">Select Item...</option>
+        <option th:each="item : ${items}" th:value="${item.id}" th:text="${item.itemName} + ' (' + ${item.unit} + ')'">
+        </option>
+    </select>
+
+    <script>
+        let rowCount = 0;
+
+        function addRow() {
+            rowCount++;
+            const tbody = document.getElementById('itemsTableBody');
+            const options = document.getElementById('hiddenItemOptions').innerHTML;
+
+            const tr = document.createElement('tr');
+            tr.id = `row-${rowCount}`;
+            tr.innerHTML = `
+                <td>
+                    <select class="form-select item-select">${options}</select>
+                </td>
+                <td>
+                    <input type="number" class="form-control qty-input" placeholder="0" oninput="calcRow(${rowCount})">
+                </td>
+                <td>
+                    <input type="number" class="form-control cost-input" placeholder="0.0" oninput="calcRow(${rowCount})">
+                </td>
+                <td>
+                    <input type="text" class="form-control line-total" disabled value="0">
+                </td>
+                <td class="text-center">
+                    <button onclick="removeRow(${rowCount})" class="btn btn-sm btn-danger">X</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function removeRow(id) {
+            document.getElementById(`row-${id}`).remove();
+            calcGrandTotal();
+        }
+
+        function calcRow(id) {
+            const row = document.getElementById(`row-${id}`);
+            const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+            const cost = parseFloat(row.querySelector('.cost-input').value) || 0;
+
+            row.querySelector('.line-total').value = (qty * cost).toFixed(2);
+            calcGrandTotal();
+        }
+
+        function calcGrandTotal() {
+            let total = 0;
+            document.querySelectorAll('.line-total').forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            document.getElementById('grandTotal').innerText = total.toFixed(2);
+        }
+
+        function submitPurchase() {
+            const supplierId = document.getElementById('supplierSelect').value;
+            if (!supplierId) { alert("Please select a supplier"); return; }
+
+            const items = [];
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const itemId = row.querySelector('.item-select').value;
+                const qty = row.querySelector('.qty-input').value;
+                const cost = row.querySelector('.cost-input').value;
+
+                if (itemId && qty > 0) {
+                    items.push({
+                        itemId: parseInt(itemId),
+                        quantity: parseFloat(qty),
+                        costPrice: parseFloat(cost)
+                    });
+                }
+            });
+
+            if (items.length === 0) { alert("Please add at least one item."); return; }
+                        // --- NEW: Get Payment Data ---
+            const paidAmt = parseFloat(document.getElementById('paidAmountInput').value) || 0;
+            const mode = document.getElementById('paymentMode').value;
+
+
+            // Send to Server
+            axios.post('/api/suppliers/purchase', {
+                supplierId: parseInt(supplierId),
+                invoiceNumber: document.getElementById('invoiceNumber').value,
+                items: items,
+                amountPaidNow: paidAmt,
+                paymentMode: mode
+
+            }).then(res => {
+                alert("Stock Updated Successfully!");
+                window.location.href = "/admin/dashboard";
+            }).catch(err => {
+                console.error(err);
+                alert("Error saving purchase.");
+            });
+        }
+
+        // Add one row by default
+        addRow();
+    </script>
+</body>
+
+</html>
