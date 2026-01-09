@@ -27,6 +27,13 @@
             </div>
             <a href="/lab/worklist" class="btn btn-secondary">Cancel</a>
         </div>
+        <!-- Error Alert -->
+        <div th:if="${errorMessage}" class="alert alert-danger shadow-sm">
+            <h4 class="alert-heading"><i class="fas fa-lock"></i> Access Denied</h4>
+            <p th:text="${errorMessage}"></p>
+            <hr>
+            <a href="/lab/worklist" class="btn btn-outline-danger btn-sm">Back to Worklist</a>
+        </div>
 
         <div class="card shadow">
             <div class="card-body">

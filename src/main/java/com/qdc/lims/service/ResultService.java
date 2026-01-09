@@ -4,6 +4,7 @@ import com.qdc.lims.dto.ResultEntryRequest;
 import com.qdc.lims.entity.LabOrder;
 import com.qdc.lims.entity.LabResult;
 import com.qdc.lims.entity.TestDefinition;
+import com.qdc.lims.repository.LabOrderRepository;
 import com.qdc.lims.repository.LabResultRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class ResultService {
 
     private final LabResultRepository repository;
     @Autowired
-    private com.qdc.lims.repository.LabOrderRepository orderRepo;
+    private LabOrderRepository orderRepo;
 
     public ResultService(LabResultRepository repository) {
         this.repository = repository;
@@ -58,26 +59,27 @@ public class ResultService {
     }
 
     @Transactional
-    public void saveResultsFromForm(com.qdc.lims.entity.LabOrder orderForm) {
+    public void saveResultsFromForm(LabOrder orderForm) {
 
         // 1. Security Check
-        LabOrder labOrder = orderRepo.findById(orderForm.getId()).orElseThrow();
+        LabOrder labOrder = orderRepo.findById(orderForm.getId())
+                .orElseThrow(() -> new RuntimeException("The Order not found"));
         if (labOrder.isReportDelivered()) {
             throw new RuntimeException("⛔ ILLEGAL ACTION: Cannot modify results after report delivery.");
         }
 
         // Loop through the results submitted from the screen
-        for (com.qdc.lims.entity.LabResult resultFromForm : orderForm.getResults()) {
+        for (LabResult resultFromForm : orderForm.getResults()) {
 
             // Fetch the real result from DB to ensure we don't lose links
-            com.qdc.lims.entity.LabResult dbResult = repository.findById(resultFromForm.getId()).orElseThrow();
+            LabResult dbResult = repository.findById(resultFromForm.getId()).orElseThrow();
 
             // Update the value
             String val = resultFromForm.getResultValue();
             dbResult.setResultValue(val);
 
             // Apply High/Low Logic
-            com.qdc.lims.entity.TestDefinition test = dbResult.getTestDefinition();
+            TestDefinition test = dbResult.getTestDefinition();
             try {
                 if (val != null && !val.isEmpty()) {
                     double numVal = Double.parseDouble(val);

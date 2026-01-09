@@ -46,12 +46,19 @@ public class LabController {
 
     // 3. Save the Data
     @PostMapping("/lab/save-results")
-    public String saveResults(@ModelAttribute LabOrder order) {
-        // The 'order' object here only contains the Results list from the form
-        resultService.saveResultsFromForm(order);
+    public String saveResults(@ModelAttribute LabOrder order, Model model) {
+        try {
+            resultService.saveResultsFromForm(order);
+            return "redirect:/lab/worklist?saved=true";
+        } catch (RuntimeException e) {
+            // If locked, go back to the form and show the error in Red
+            // We need to reload the order to show the form again
+            LabOrder dbOrder = orderRepo.findById(order.getId()).orElseThrow();
+            model.addAttribute("order", dbOrder);
+            model.addAttribute("errorMessage", e.getMessage());
+            return "lab-entry"; // Stay on the page
+        }
 
-        // Redirect back to worklist
-        return "redirect:/lab/worklist?saved=true";
     }
 
 }
