@@ -10,8 +10,10 @@
 
     <nav class="navbar navbar-dark bg-danger mb-4">
         <div class="container">
-            <a class="navbar-brand" href="/">QDC LAB - TECHNICIAN MODE</a>
-            <a href="/" class="btn btn-outline-light btn-sm">Dashboard</a>
+            <a class="navbar-brand" href="/">
+                <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span> LAB WORKLIST
+            </a>
+            <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
         </div>
     </nav>
 

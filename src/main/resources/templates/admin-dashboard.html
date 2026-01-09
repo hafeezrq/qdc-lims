@@ -10,7 +10,10 @@
 
     <nav class="navbar navbar-dark bg-secondary mb-4">
         <div class="container">
-            <a class="navbar-brand" href="#">🔒 QDC ADMIN</a>
+            <a class="navbar-brand" href="#">
+                🔒 <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span> ADMIN
+
+            </a>
             <a href="/" class="btn btn-outline-light btn-sm">Log Out</a>
         </div>
     </nav>

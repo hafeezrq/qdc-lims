@@ -45,7 +45,8 @@
     <nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/reception/dashboard">
-                <i class="fas fa-clinic-medical me-2"></i>QDC RECEPTION
+                <i class="fas fa-clinic-medical me-2"></i>
+                <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span> RECEPTION
             </a>
             <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
         </div>
