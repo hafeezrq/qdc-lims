@@ -256,4 +256,24 @@ public class MainWebController {
         inventoryRepo.save(item);
         return "redirect:/inventory";
     }
+
+    // ================= USER MANAGEMENT =================
+
+    // 19. Show User List & Add Form
+    @GetMapping("/admin/users")
+    public String usersPage(Model model) {
+        model.addAttribute("users", userRepo.findAll());
+        model.addAttribute("newUser", new com.qdc.lims.entity.User());
+        return "users-list";
+    }
+
+    // 20. Save New User
+    @PostMapping("/admin/users")
+    public String saveUser(@ModelAttribute com.qdc.lims.entity.User user) {
+        // Encrypt the password before saving!
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setActive(true); // Default to active
+        userRepo.save(user);
+        return "redirect:/admin/users?success=true";
+    }
 }

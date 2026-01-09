@@ -11,9 +11,13 @@
     <nav class="navbar navbar-dark bg-danger mb-4">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span> LAB WORKLIST
+                <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span> LAB
             </a>
-            <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
+            <div>
+                <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
+                <!-- ADDED: Logout Button -->
+                <a href="/logout" class="btn btn-light btn-sm text-danger fw-bold">Log Out</a>
+            </div>
         </div>
     </nav>
 

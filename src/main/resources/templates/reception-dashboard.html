@@ -48,7 +48,11 @@
                 <i class="fas fa-clinic-medical me-2"></i>
                 <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span> RECEPTION
             </a>
-            <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
+            <div class="d-flex gap-2">
+                <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
+                <!-- ADDED: Logout Button -->
+                <a href="/logout" class="btn btn-light btn-sm text-primary fw-bold">Log Out</a>
+            </div>
         </div>
     </nav>
 

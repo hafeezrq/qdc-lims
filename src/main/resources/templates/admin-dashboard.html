@@ -14,7 +14,7 @@
                 🔒 <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span> ADMIN
 
             </a>
-            <a href="/" class="btn btn-outline-light btn-sm">Log Out</a>
+            <a href="/logout" class="btn btn-outline-light btn-sm">Log Out</a>
         </div>
     </nav>
 
@@ -46,7 +46,8 @@
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             <a href="/settings" class="btn btn-outline-dark">⚙️ Lab Settings</a>
-                            <button class="btn btn-outline-secondary" disabled>👥 User Management (Soon)</button>
+                            <a href="/admin/users" class="btn btn-outline-secondary">👥 User Management</a>
+
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>User Management</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/admin/dashboard"><i class="fas fa-users-cog me-2"></i> User Manager</a>
+            <a href="/admin/dashboard" class="btn btn-outline-light btn-sm">Back to Admin</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+
+            <!-- LEFT: Add User Form -->
+            <div class="col-md-4">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">Create Staff Account</div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/users}" th:object="${newUser}" method="post">
+
+                            <div class="mb-3">
+                                <label class="fw-bold">Full Name</label>
+                                <input type="text" th:field="*{fullName}" class="form-control"
+                                    placeholder="e.g. Sarah Khan" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Username (Login ID)</label>
+                                <input type="text" th:field="*{username}" class="form-control" placeholder="reception1"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Password</label>
+                                <input type="password" th:field="*{password}" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="fw-bold text-danger">Assign Role</label>
+                                <select th:field="*{role}" class="form-select" required>
+                                    <option value="ROLE_RECEPTION">Receptionist</option>
+                                    <option value="ROLE_LAB">Lab Technician</option>
+                                    <option value="ROLE_ADMIN">Administrator</option>
+                                </select>
+                                <small class="text-muted">
+                                    <strong>Reception:</strong> Booking & Cash.<br>
+                                    <strong>Lab:</strong> Results only.<br>
+                                    <strong>Admin:</strong> Full Access.
+                                </small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: User List -->
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header">Active Users</div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped mb-0 align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="u : ${users}">
+                                    <td th:text="${u.fullName}"></td>
+                                    <td th:text="${u.username}" class="fw-bold font-monospace"></td>
+                                    <td>
+                                        <span th:if="${u.role == 'ROLE_ADMIN'}" class="badge bg-dark">ADMIN</span>
+                                        <span th:if="${u.role == 'ROLE_RECEPTION'}"
+                                            class="badge bg-primary">RECEPTION</span>
+                                        <span th:if="${u.role == 'ROLE_LAB'}" class="badge bg-danger">LAB TECH</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Active</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
