@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
-    <title>Inventory</title>
+    <title th:text="${labInfo.labName} + ' - Inventory'">Inventory</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
   </head>
 
   <body class="bg-light">
     <nav class="navbar navbar-dark bg-primary mb-4">
       <div class="container">
-        <a class="navbar-brand" href="/">QDC-LIMS Inventory</a>
+        <a class="navbar-brand" href="/">
+          <span th:text="${labInfo.labName}">LIMS</span> INVENTORY
+        </a>
         <a href="/" class="btn btn-outline-light btn-sm">Dashboard</a>
       </div>
     </nav>

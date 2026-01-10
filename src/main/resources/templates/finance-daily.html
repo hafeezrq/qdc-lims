@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
-    <title>Daily Closing Report</title>
+    <title th:text="${labInfo.labName} + ' - Daily Closing'">
+      Daily Closing Report
+    </title>
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
   </head>
 
@@ -11,6 +13,7 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 class="fw-bold text-primary">💰 Daily Cash Closing</h3>
+          <small class="text-muted" th:text="${labInfo.labName}"></small>
           <p class="text-muted mb-0">
             Financial Summary for:
             <span class="fw-bold text-dark" th:text="${date}"></span>

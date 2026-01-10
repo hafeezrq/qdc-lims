@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
-    <title>User Management</title>
+    <title th:text="${labInfo.labName} + ' - User Management'">
+      User Management
+    </title>
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
   </head>
@@ -10,8 +12,9 @@
     <nav class="navbar navbar-dark bg-dark mb-4">
       <div class="container">
         <a class="navbar-brand" href="/admin/dashboard"
-          ><i class="fas fa-users-cog me-2"></i> User Manager</a
-        >
+          ><i class="fas fa-users-cog me-2"></i>
+          <span th:text="${labInfo.labName}">LIMS</span> USER MANAGER
+        </a>
         <a href="/admin/dashboard" class="btn btn-outline-light btn-sm"
           >Back to Admin</a
         >

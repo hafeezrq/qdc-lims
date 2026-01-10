@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
-    <title>Login</title>
+    <title th:text="${labInfo != null ? labInfo.labName : 'LIMS'} + ' - Login'">
+      Login
+    </title>
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
   </head>
 
