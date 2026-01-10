@@ -16,7 +16,7 @@ public class DataSeeder implements CommandLineRunner {
     private final TestConsumptionRepository recipeRepo;
     // private final PatientRepository patientRepo;
     private final PatientService patientService;
-    private final LabInfoRepository labInfoRepo;
+    //private final LabInfoRepository labInfoRepo;
 
     public DataSeeder(InventoryItemRepository inventoryRepo, DoctorRepository doctorRepo,
             TestDefinitionRepository testRepo, TestConsumptionRepository recipeRepo,
@@ -27,7 +27,7 @@ public class DataSeeder implements CommandLineRunner {
         this.recipeRepo = recipeRepo;
         // this.patientRepo = patientRepo;
         this.patientService = patientService;
-        this.labInfoRepo = labInfoRepo;
+        //this.labInfoRepo = labInfoRepo;
     }
 
     @Override

@@ -37,8 +37,8 @@ public class MainWebController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private SupplierRepository supplierRepo; // Supplier Repo
+    //@Autowired
+    //private SupplierRepository supplierRepo; // Supplier Repo
 
     @Autowired
     private PatientService patientService;
