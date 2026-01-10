@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Range Manager</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+  <body class="bg-light">
+    <div class="container mt-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>
+          Rules for:
+          <span class="text-primary" th:text="${test.testName}"></span>
+        </h3>
+        <a href="/tests/list" class="btn btn-secondary">Back to Menu</a>
+      </div>
+
+      <div class="row">
+        <!-- LEFT: Add Rule Form -->
+        <div class="col-md-4">
+          <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+              Add Age/Gender Rule
+            </div>
+            <div class="card-body">
+              <form
+                th:action="@{/tests/{id}/ranges(id=${test.id})}"
+                th:object="${newRange}"
+                method="post"
+              >
+                <div class="mb-3">
+                  <label>Gender</label>
+                  <select th:field="*{gender}" class="form-select">
+                    <option value="Both">Both</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label>Min Age (Yrs)</label>
+                    <input
+                      type="number"
+                      th:field="*{minAge}"
+                      class="form-control"
+                      value="0"
+                    />
+                  </div>
+                  <div class="col-6">
+                    <label>Max Age</label>
+                    <input
+                      type="number"
+                      th:field="*{maxAge}"
+                      class="form-control"
+                      value="100"
+                    />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label class="fw-bold text-success">Low Limit</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      th:field="*{minVal}"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <div class="col-6">
+                    <label class="fw-bold text-danger">High Limit</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      th:field="*{maxVal}"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100">
+                  Add Rule
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: List of Rules -->
+        <div class="col-md-8">
+          <div class="card shadow">
+            <div class="card-header">Existing Rules</div>
+            <div class="card-body p-0">
+              <table class="table table-striped mb-0 text-center">
+                <thead class="table-secondary">
+                  <tr>
+                    <th>Gender</th>
+                    <th>Age Group</th>
+                    <th>Normal Range</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="r : ${ranges}">
+                    <td th:text="${r.gender}"></td>
+                    <td
+                      th:text="${r.minAge} + ' - ' + ${r.maxAge} + ' yrs'"
+                    ></td>
+                    <td
+                      class="fw-bold"
+                      th:text="${r.minVal} + ' - ' + ${r.maxVal}"
+                    ></td>
+                    <td>
+                      <a
+                        th:href="@{/tests/{tid}/ranges/delete/{rid}(tid=${test.id}, rid=${r.id})}"
+                        class="btn btn-danger btn-sm"
+                        >Remove</a
+                      >
+                    </td>
+                  </tr>
+                  <tr th:if="${ranges.empty}">
+                    <td colspan="4" class="text-center py-4 text-muted">
+                      No specific rules. System will use Default Range.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

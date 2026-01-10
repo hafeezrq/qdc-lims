@@ -21,13 +21,17 @@ public class TestDefinition {
 
     private String unit;
 
-    private Double minRange;
-    private Double maxRange;
-
     private String department;
+
+    private Double minRange; 
+    private Double maxRange; 
+
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
+    private java.util.List<ReferenceRange> ranges = new java.util.ArrayList<>();
 
     // MAKE SURE THERE ARE NO INVENTORY FIELDS HERE!
 }

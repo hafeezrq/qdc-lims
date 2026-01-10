@@ -83,7 +83,7 @@ public class ResultService {
             String val = resultFromForm.getResultValue();
             dbResult.setResultValue(val);
 
-            // --- NEW: AUDIT STAMP ---
+            // --- AUDIT STAMP ---
             // Only update if the value changed or is new
             if (resultFromForm.getResultValue() != null && !resultFromForm.getResultValue().isEmpty()) {
                 dbResult.setPerformedBy(currentUser);
@@ -93,28 +93,61 @@ public class ResultService {
 
             // Apply High/Low Logic
             TestDefinition test = dbResult.getTestDefinition();
+            
             try {
                 if (val != null && !val.isEmpty()) {
+                    // 2. Parse Number
                     double numVal = Double.parseDouble(val);
 
-                    if (test.getMinRange() != null && test.getMaxRange() != null) {
-                        if (numVal < test.getMinRange()) {
+                    // 3. Get Patient 
+                    com.qdc.lims.entity.Patient patient = dbResult.getLabOrder().getPatient();
+
+                    // 4. Find Matching Rule (The New Logic)
+                    com.qdc.lims.entity.ReferenceRange matchingRule = null;
+                    
+                    // Check if ranges exist (avoid null pointer if list is empty)
+                    if (test.getRanges() != null) {
+                        for (com.qdc.lims.entity.ReferenceRange rule : test.getRanges()) {
+                            // Check Gender ("Both", "Male", "Female")
+                            boolean genderMatch = rule.getGender().equalsIgnoreCase("Both") 
+                                               || rule.getGender().equalsIgnoreCase(patient.getGender());
+                            
+                            // Check Age
+                            boolean ageMatch = patient.getAge() >= rule.getMinAge() 
+                                            && patient.getAge() <= rule.getMaxAge();
+    
+                            if (genderMatch && ageMatch) {
+                                matchingRule = rule;
+                                break; // Found the specific rule for this person
+                            }
+                        }
+                    }
+
+                    // 5. Apply High/Low Logic based on the rule found
+                    if (matchingRule != null) {
+                        if (numVal < matchingRule.getMinVal()) {
                             dbResult.setAbnormal(true);
                             dbResult.setRemarks("LOW");
-                        } else if (numVal > test.getMaxRange()) {
+                        } else if (numVal > matchingRule.getMaxVal()) {
                             dbResult.setAbnormal(true);
                             dbResult.setRemarks("HIGH");
                         } else {
                             dbResult.setAbnormal(false);
                             dbResult.setRemarks("Normal");
                         }
+                    } else {
+                        // Fallback: If no specific Age/Gender rule found, assume Normal
+                        // (Or you could check the old min/max fields if you kept them as backup)
+                        dbResult.setAbnormal(false);
+                        dbResult.setRemarks(""); 
                     }
                 }
             } catch (NumberFormatException e) {
-                // Not a number (e.g. "Positive"), ignore range check
+                // Handle Non-Numeric Results (Text like "Positive")
                 dbResult.setAbnormal(false);
                 dbResult.setRemarks("");
             }
+
 
             repository.save(dbResult);
         }

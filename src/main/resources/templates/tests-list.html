@@ -48,6 +48,13 @@
                   >
                     🧪 Ingredients
                   </a>
+                  <!-- NEW: Range Button -->
+                  <a
+                    th:href="@{/tests/{id}/ranges(id=${t.id})}"
+                    class="btn btn-sm btn-outline-primary"
+                  >
+                    📏 Ranges
+                  </a>
                 </td>
               </tr>
               <tr th:if="${tests.empty}">
