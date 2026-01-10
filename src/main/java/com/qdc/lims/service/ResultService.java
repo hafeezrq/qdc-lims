@@ -10,6 +10,8 @@ import com.qdc.lims.repository.LabResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
+import java.time.LocalDateTime;
 
 @Service
 public class ResultService {
@@ -68,6 +70,9 @@ public class ResultService {
             throw new RuntimeException("⛔ ILLEGAL ACTION: Cannot modify results after report delivery.");
         }
 
+        // 1. Get Current User (The Technician)
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+
         // Loop through the results submitted from the screen
         for (LabResult resultFromForm : orderForm.getResults()) {
 
@@ -77,6 +82,14 @@ public class ResultService {
             // Update the value
             String val = resultFromForm.getResultValue();
             dbResult.setResultValue(val);
+
+            // --- NEW: AUDIT STAMP ---
+            // Only update if the value changed or is new
+            if (resultFromForm.getResultValue() != null && !resultFromForm.getResultValue().isEmpty()) {
+                dbResult.setPerformedBy(currentUser);
+                dbResult.setPerformedAt(LocalDateTime.now());
+            }
+            // ------------------------
 
             // Apply High/Low Logic
             TestDefinition test = dbResult.getTestDefinition();

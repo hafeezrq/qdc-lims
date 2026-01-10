@@ -25,8 +25,11 @@ public class LabResult {
 
     // The data entered by the Technician
     private String resultValue;
-
     private boolean isAbnormal;
-
     private String remarks;
+
+    // --- AUDIT TRAIL ---
+    private String performedBy; // The Username (e.g., "labtech1")
+    private java.time.LocalDateTime performedAt; // Exact timestamp
+
 }
