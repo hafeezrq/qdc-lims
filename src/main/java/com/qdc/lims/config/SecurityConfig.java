@@ -69,10 +69,16 @@ public class SecurityConfig {
         return username -> {
             com.qdc.lims.entity.User user = userRepo.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                    String[] roles = user.getRole().split(",");
+                                // Clean up "ROLE_" prefix because builder.roles() adds it automatically
+            for (int i = 0; i < roles.length; i++) {
+                roles[i] = roles[i].trim().replace("ROLE_", "");
+            }
+
 
             return User.withUsername(user.getUsername())
                     .password(user.getPassword())
-                    .roles(user.getRole().replace("ROLE_", "")) // Spring wants "ADMIN", DB has "ROLE_ADMIN"
+                    .roles(roles) 
                     .build();
         };
     }

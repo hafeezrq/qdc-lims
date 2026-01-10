@@ -81,14 +81,19 @@
                 <div class="mb-3">
                   <label class="fw-bold text-danger">Assign Role</label>
                   <select th:field="*{role}" class="form-select" required>
-                    <option value="ROLE_RECEPTION">Receptionist</option>
-                    <option value="ROLE_LAB">Lab Technician</option>
-                    <option value="ROLE_ADMIN">Administrator</option>
+                    <option value="ROLE_RECEPTION">Receptionist Only</option>
+                    <option value="ROLE_LAB">Lab Technician Only</option>
+                    <!-- NEW OPTION -->
+                    <option value="ROLE_RECEPTION,ROLE_LAB">
+                      All-Rounder (Recep + Lab)
+                    </option>
+
+                    <option value="ROLE_ADMIN">
+                      Administrator (Full Access)
+                    </option>
                   </select>
                   <small class="text-muted">
-                    <strong>Reception:</strong> Booking & Cash.<br />
-                    <strong>Lab:</strong> Results only.<br />
-                    <strong>Admin:</strong> Full Access.
+                    <strong>All-Rounder:</strong> Can access both portals.
                   </small>
                 </div>
 

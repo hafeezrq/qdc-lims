@@ -40,15 +40,27 @@
   <body class="bg-light">
     <!-- Navbar -->
     <nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
-      <div class="container">
+      <div class="container-fluid px-4">
+        <!-- Changed container to container-fluid for more space -->
         <a class="navbar-brand fw-bold" href="/reception/dashboard">
           <i class="fas fa-clinic-medical me-2"></i>
           <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span>
-          RECEPTION
         </a>
-        <div class="d-flex gap-2">
+
+        <div class="d-flex align-items-center gap-3">
+          <!-- NEW: User Info Display -->
+          <div class="text-white text-end lh-1 small">
+            <div class="fw-bold" sec:authentication="name">Username</div>
+            <div
+              class="opacity-75"
+              style="font-size: 0.75rem"
+              sec:authentication="principal.authorities"
+            >
+              ROLE
+            </div>
+          </div>
+
           <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
-          <!-- ADDED: Logout Button -->
           <a href="/logout" class="btn btn-light btn-sm text-primary fw-bold"
             >Log Out</a
           >

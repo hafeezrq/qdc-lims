@@ -13,8 +13,22 @@
           <span th:text="${labInfo != null ? labInfo.labName : 'QDC'}"></span>
           ADMIN
         </a>
-        <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
-        <a href="/logout" class="btn btn-outline-light btn-sm">Log Out</a>
+        <div class="d-flex align-items-center gap-3">
+          <div class="text-white text-end lh-1 small">
+            <div class="fw-bold" sec:authentication="name">Username</div>
+            <div
+              class="opacity-75"
+              style="font-size: 0.75rem"
+              sec:authentication="principal.authorities"
+            >
+              ROLE
+            </div>
+          </div>
+          <a href="/" class="btn btn-outline-light btn-sm">Switch Portal</a>
+          <a href="/logout" class="btn btn-light btn-sm text-secondary fw-bold"
+            >Log Out</a
+          >
+        </div>
       </div>
     </nav>
 
