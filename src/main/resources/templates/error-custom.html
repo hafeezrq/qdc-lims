@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Error</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/all.min.css" rel="stylesheet" />
+  </head>
+  <body
+    class="bg-light d-flex align-items-center justify-content-center"
+    style="height: 100vh"
+  >
+    <div class="text-center">
+      <h1 class="display-1 text-danger">
+        <i class="fas fa-exclamation-circle"></i>
+      </h1>
+
+      <h2 class="fw-bold text-dark" th:text="${errorTitle}">Error</h2>
+
+      <p class="lead text-muted mb-4" th:text="${errorMessage}">
+        An unexpected error occurred.
+      </p>
+
+      <div class="d-flex justify-content-center gap-3">
+        <a
+          href="javascript:history.back()"
+          class="btn btn-outline-secondary btn-lg"
+        >
+          &larr; Go Back
+        </a>
+        <a href="/" class="btn btn-primary btn-lg">
+          <i class="fas fa-home me-2"></i> Return to Portal
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
