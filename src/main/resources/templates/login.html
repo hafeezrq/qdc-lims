@@ -32,6 +32,14 @@
       >
         You have been logged out.
       </div>
+      <!-- NEW SUCCESS MESSAGE -->
+      <div
+        th:if="${param.setupSuccess}"
+        class="alert alert-success text-center shadow-sm"
+      >
+        🎉 System Setup Complete!<br />
+        Please log in with your new Admin account.
+      </div>
 
       <form action="/login" method="post">
         <div class="mb-3">

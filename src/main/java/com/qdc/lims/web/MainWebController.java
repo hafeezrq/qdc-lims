@@ -68,7 +68,7 @@ public class MainWebController {
     public String saveInitialSetup(@ModelAttribute LabInfo labInfo, 
                                    @RequestParam String adminUsername, 
                                    @RequestParam String adminPassword,
-                                   Model model) { // <--- Added Model here
+                                   Model model) { 
         
         // --- VALIDATION ---
         if (adminPassword.length() < 8 || !adminPassword.matches(".*\\d.*")) {
@@ -90,7 +90,7 @@ public class MainWebController {
             userRepo.save(admin);
         }
 
-        return "redirect:/login";
+        return "redirect:/login?setupSuccess=true";
     }
 
     // ================= SETTINGS (EDIT MODE) =================
