@@ -1,137 +1,169 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <title>Cash Receipt</title>
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
     <style>
-        /* Styles for Printing */
-        @media print {
-            .no-print {
-                display: none important;
-            }
+      /* Styles for Printing */
+      @media print {
+        .no-print {
+          display: none important;
+        }
 
-            body {
-                background: white;
-            }
-
-            .receipt-box {
-                border: none !important;
-                box-shadow: none !important;
-            }
+        body {
+          background: white;
         }
 
         .receipt-box {
-            max-width: 600px;
-            margin: 50px auto;
-            border: 2px solid #000;
-            padding: 20px;
-            background: white;
+          border: none !important;
+          box-shadow: none !important;
         }
+      }
+
+      .receipt-box {
+        max-width: 600px;
+        margin: 50px auto;
+        border: 2px solid #000;
+        padding: 20px;
+        background: white;
+      }
     </style>
-</head>
+  </head>
 
-<body class="bg-light">
-
+  <body class="bg-light">
     <div class="container">
+      <div class="receipt-box shadow">
+        <!-- Lab Header -->
+        <div class="text-center mb-4">
+          <h2 class="fw-bold" th:text="${info.labName}"></h2>
+          <p class="mb-0" th:text="${info.address}"></p>
+          <p class="mb-0" th:text="'Ph: ' + ${info.phoneNumber}"></p>
 
-        <div class="receipt-box shadow">
+          <!-- NEW LINES -->
+          <p
+            class="mb-0 small"
+            th:if="${info.email != null}"
+            th:text="${info.email}"
+          ></p>
+          <p
+            class="small"
+            th:if="${info.website != null}"
+            th:text="${info.website}"
+          ></p>
 
-            <!-- Lab Header -->
-            <div class="text-center mb-4">
-                <h2 class="fw-bold" th:text="${info.labName}"></h2>
-                <p class="mb-0" th:text="${info.address}"></p>
-                <p class="mb-0" th:text="'Ph: ' + ${info.phoneNumber}"></p>
-                
-                <!-- NEW LINES -->
-                <p class="mb-0 small" th:if="${info.email != null}" th:text="${info.email}"></p>
-                <p class="small" th:if="${info.website != null}" th:text="${info.website}"></p>
-                
-                <hr>
-                <h4>CASH RECEIPT</h4>
-            </div>            
+          <hr />
+          <h4>CASH RECEIPT</h4>
+        </div>
 
-            <!-- Patient Info -->
-            <div class="row mb-3">
-                <div class="col-6">
-                    <p><strong>Order ID:</strong> #<span th:text="${order.id}"></span></p>
-                    <p><strong>Date:</strong> <span
-                            th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy HH:mm')}"></span></p>
-                    <p><strong>Mr./Ms.:</strong> <span th:text="${order.patient.fullName}"></span></p>
-                </div>
-                <div class="col-6 text-end">
-                    <p><strong>MRN:</strong> <span th:text="${order.patient.mrn}"></span></p>
-                    <p><strong>Ref By:</strong>
-                        <span th:if="${order.referringDoctor != null}" th:text="${order.referringDoctor.name}"></span>
-                        <span th:if="${order.referringDoctor == null}">Self</span>
-                    </p>
-                </div>
-            </div>
+        <!-- Patient Info -->
+        <div class="row mb-3">
+          <div class="col-6">
+            <p>
+              <strong>Order ID:</strong> #<span th:text="${order.id}"></span>
+            </p>
+            <p>
+              <strong>Date:</strong>
+              <span
+                th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy HH:mm')}"
+              ></span>
+            </p>
+            <p>
+              <strong>Mr./Ms.:</strong>
+              <span th:text="${order.patient.fullName}"></span>
+            </p>
+          </div>
+          <div class="col-6 text-end">
+            <p>
+              <strong>MRN:</strong> <span th:text="${order.patient.mrn}"></span>
+            </p>
+            <p>
+              <strong>Ref By:</strong>
+              <span
+                th:if="${order.referringDoctor != null}"
+                th:text="${order.referringDoctor.name}"
+              ></span>
+              <span th:if="${order.referringDoctor == null}">Self</span>
+            </p>
+          </div>
+        </div>
 
-            <!-- Test List -->
-            <table class="table table-bordered">
-                <thead class="table-light">
-                    <tr>
-                        <th>Test Description</th>
-                        <th class="text-end">Price (Rs)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="result : ${order.results}">
-                        <td th:text="${result.testDefinition.testName}"></td>
-                        <td class="text-end" th:text="${result.testDefinition.price}"></td>
-                    </tr>
-                </tbody>
-                tfoot>
-                <tr>
-                    <td class="text-end">Sub Total</td>
-                    <td class="text-end" th:text="${order.totalAmount}"></td>
-                </tr>
-                <tr th:if="${order.discountAmount > 0}">
-                    <td class="text-end">Discount</td>
-                    <td class="text-end text-danger" th:text="'- ' + ${order.discountAmount}"></td>
-                </tr>
-                <tr class="fw-bold fs-5">
-                    <td class="text-end">Net Total</td>
-                    <td class="text-end" th:text="${order.totalAmount - order.discountAmount}"></td>
-                </tr>
-                <tr>
-                    <td class="text-end">Cash Paid</td>
-                    <td class="text-end" th:text="${order.paidAmount}"></td>
-                </tr>
-                <tr th:if="${order.balanceDue > 0}">
-                    <td class="text-end fw-bold text-danger">BALANCE DUE</td>
-                    <td class="text-end fw-bold text-danger" th:text="${order.balanceDue}"></td>
-                </tr>
-                </tfoot>
+        <!-- Test List -->
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Test Description</th>
+              <th class="text-end">Price (Rs)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="result : ${order.results}">
+              <td th:text="${result.testDefinition.testName}"></td>
+              <td
+                class="text-end"
+                th:text="${result.testDefinition.price}"
+              ></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td class="text-end">Sub Total</td>
+              <td class="text-end" th:text="${order.totalAmount}"></td>
+            </tr>
+            <tr th:if="${order.discountAmount > 0}">
+              <td class="text-end">Discount</td>
+              <td
+                class="text-end text-danger"
+                th:text="'- ' + ${order.discountAmount}"
+              ></td>
+            </tr>
+            <tr class="fw-bold fs-5">
+              <td class="text-end">Net Total</td>
+              <td
+                class="text-end"
+                th:text="${order.totalAmount - order.discountAmount}"
+              ></td>
+            </tr>
+            <tr>
+              <td class="text-end">Cash Paid</td>
+              <td class="text-end" th:text="${order.paidAmount}"></td>
+            </tr>
+            <tr th:if="${order.balanceDue > 0}">
+              <td class="text-end fw-bold text-danger">BALANCE DUE</td>
+              <td
+                class="text-end fw-bold text-danger"
+                th:text="${order.balanceDue}"
+              ></td>
+            </tr>
+          </tfoot>
         </table>
 
-            <div class="text-center mt-5">
-                <p class="small text-muted">This is a computer generated receipt.</p>
-                <p class="fw-bold">Thank you for trusting QDC.</p>
-            </div>
-
+        <div class="text-center mt-5">
+          <p class="small text-muted">This is a computer generated receipt.</p>
+          <p class="fw-bold">Thank you for trusting QDC.</p>
         </div>
+      </div>
 
-        <!-- Buttons (Hidden when printing) -->
-        <div class="text-center no-print mb-5 d-flex justify-content-center gap-3">
-        
-            <!-- Optional Print -->
-            <button onclick="window.print()" class="btn btn-primary btn-lg">
-                🖨 Print Receipt
-            </button>
-        
-            <!-- Go to Dashboard -->
-            <a href="/reception/dashboard" class="btn btn-dark btn-lg">
-                🏠 Dashboard
-            </a>
-            <!-- Book Another -->
-            <a href="/search" class="btn btn-outline-secondary btn-lg">
-                New Booking
-            </a>
-        </div>
+      <!-- Buttons (Hidden when printing) -->
+      <div
+        class="text-center no-print mb-5 d-flex justify-content-center gap-3"
+      >
+        <button onclick="window.print()" class="btn btn-primary btn-lg">
+          🖨 Print A4
+        </button>
+        <a
+          th:href="@{/orders/receipt/thermal/{id}(id=${order.id})}"
+          class="btn btn-warning btn-lg"
+        >
+          📜 Thermal Format
+        </a>
+        <a href="/reception/dashboard" class="btn btn-dark btn-lg">
+          🏠 Dashboard
+        </a>
+        <a href="/search" class="btn btn-outline-secondary btn-lg">
+          New Booking
+        </a>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>

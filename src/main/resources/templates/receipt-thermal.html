@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Receipt</title>
+    <style>
+      body {
+        font-family: "Courier New", Courier, monospace; /* Monospace looks best on thermal */
+        width: 80mm; /* Standard Thermal Width */
+        margin: 0 auto;
+        padding: 5px;
+        color: black;
+        background: white;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .text-end {
+        text-align: right;
+      }
+      .bold {
+        font-weight: bold;
+      }
+      .small {
+        font-size: 12px;
+      }
+      .divider {
+        border-top: 1px dashed black;
+        margin: 10px 0;
+      }
+
+      table {
+        width: 100%;
+        font-size: 12px;
+      }
+      td {
+        vertical-align: top;
+      }
+
+      /* Hide buttons when printing */
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        @page {
+          margin: 0;
+        } /* Use full paper width */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="text-center">
+      <h3 style="margin: 0" th:text="${info.labName}">LAB NAME</h3>
+      <p class="small" style="margin: 5px 0" th:text="${info.address}"></p>
+      <p
+        class="small"
+        style="margin: 0"
+        th:text="'Ph: ' + ${info.phoneNumber}"
+      ></p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Info -->
+    <div class="small">
+      <p style="margin: 2px 0">
+        <strong>Date:</strong>
+        <span
+          th:text="${#temporals.format(order.orderDate, 'dd-MM-yy HH:mm')}"
+        ></span>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Order #:</strong> <span th:text="${order.id}"></span>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>Patient:</strong>
+        <span th:text="${order.patient.fullName}"></span>
+      </p>
+      <p style="margin: 2px 0">
+        <strong>MRN:</strong> <span th:text="${order.patient.mrn}"></span>
+      </p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Items -->
+    <table>
+      <tr th:each="res : ${order.results}">
+        <td th:text="${res.testDefinition.testName}">Test Name</td>
+        <td class="text-end" th:text="${res.testDefinition.price}">000</td>
+      </tr>
+    </table>
+
+    <div class="divider"></div>
+
+    <!-- Totals -->
+    <table>
+      <tr>
+        <td class="text-end">Subtotal:</td>
+        <td class="text-end" th:text="${order.totalAmount}">0</td>
+      </tr>
+      <tr th:if="${order.discountAmount > 0}">
+        <td class="text-end">Disc:</td>
+        <td class="text-end" th:text="'-' + ${order.discountAmount}">0</td>
+      </tr>
+      <tr class="bold" style="font-size: 14px">
+        <td class="text-end">Net Total:</td>
+        <td
+          class="text-end"
+          th:text="${order.totalAmount - order.discountAmount}"
+        >
+          0
+        </td>
+      </tr>
+      <tr>
+        <td class="text-end">Paid:</td>
+        <td class="text-end" th:text="${order.paidAmount}">0</td>
+      </tr>
+      <tr th:if="${order.balanceDue > 0}">
+        <td class="text-end bold">Balance:</td>
+        <td class="text-end bold" th:text="${order.balanceDue}">0</td>
+      </tr>
+    </table>
+
+    <div class="text-center small" style="margin-top: 20px">
+      <p>Thank you for visiting!</p>
+      <p>Get Well Soon.</p>
+    </div>
+
+    <!-- Buttons -->
+    <div
+      class="no-print text-center"
+      style="margin-top: 20px; padding-bottom: 20px"
+    >
+      <button
+        onclick="window.print()"
+        style="padding: 10px 20px; font-weight: bold; cursor: pointer"
+      >
+        PRINT
+      </button>
+      <br /><br />
+      <a
+        th:href="@{/orders/receipt/{id}(id=${order.id})}"
+        style="text-decoration: none; color: blue"
+        >[ Switch to A4 View ]</a
+      >
+      <br /><br />
+      <a href="/reception/dashboard" style="text-decoration: none; color: gray"
+        >[ Back to Dashboard ]</a
+      >
+    </div>
+  </body>
+</html>

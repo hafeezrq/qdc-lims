@@ -194,6 +194,17 @@ public class MainWebController {
         return "receipt";
     }
 
+    // 13a. Show Thermal Receipt (80mm)
+    @GetMapping("/orders/receipt/thermal/{orderId}")
+    public String showThermalReceipt(@PathVariable Long orderId, Model model) {
+        LabOrder order = orderRepo.findById(orderId).orElseThrow();
+        LabInfo info = labInfoRepo.findById(1L).orElse(new LabInfo());
+        
+        model.addAttribute("order", order);
+        model.addAttribute("info", info);
+        return "receipt-thermal"; 
+    }
+
     @GetMapping("/orders/report/{orderId}")
     public String showReport(@PathVariable Long orderId, Model model) {
         LabOrder order = orderRepo.findById(orderId).orElseThrow();
