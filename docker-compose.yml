@@ -19,7 +19,7 @@ services:
     container_name: qdc_lims_app
     restart: always
     ports:
-      - "80:8080" # Map computer's Port 80 (Standard Web) to App's 8080
+      - "8080:8080" # Map computer's Port 80 (Standard Web) to App's 8080
     environment:
       # OVERRIDE the settings in application.properties
       # Note: 'db' here refers to the service name above, not localhost
