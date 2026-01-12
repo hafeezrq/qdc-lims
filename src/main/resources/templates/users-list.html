@@ -40,66 +40,73 @@
                 th:object="${newUser}"
                 method="post"
               >
+                <!-- Hidden ID: Critical for Updates -->
+                <input type="hidden" th:field="*{id}" />
+
+                <!-- Title changes if editing -->
+                <h5
+                  class="card-title text-white mb-3"
+                  th:text="${newUser.id == null ? 'Create Staff Account' : 'Edit User: ' + newUser.username}"
+                ></h5>
+
                 <div class="mb-3">
                   <label class="fw-bold">Full Name</label>
                   <input
                     type="text"
                     th:field="*{fullName}"
                     class="form-control"
-                    placeholder="e.g. Sarah Khan"
                     required
                   />
                 </div>
 
                 <div class="mb-3">
                   <label>Username (Login ID)</label>
+                  <!-- Readonly if editing (optional, but safer) -->
                   <input
                     type="text"
                     th:field="*{username}"
                     class="form-control"
-                    placeholder="reception1"
+                    th:readonly="${newUser.id != null}"
                     required
                   />
                 </div>
 
                 <div class="mb-3">
                   <label>Password</label>
+                  <!-- Not required during edit -->
                   <input
                     type="password"
-                    th:field="*{password}"
+                    name="password"
                     class="form-control"
-                    placeholder="Min 8 chars, 1 number"
-                    pattern="^(?=.*[0-9]).{8,}$"
-                    title="Password must be at least 8 characters long and contain at least one number."
-                    required
+                    placeholder="Leave empty to keep current password"
+                    th:required="${newUser.id == null}"
                   />
-                  <div class="form-text text-muted small">
-                    Min 8 chars, must include a number.
-                  </div>
                 </div>
 
                 <div class="mb-3">
                   <label class="fw-bold text-danger">Assign Role</label>
                   <select th:field="*{role}" class="form-select" required>
-                    <option value="ROLE_RECEPTION">Receptionist Only</option>
-                    <option value="ROLE_LAB">Lab Technician Only</option>
-                    <!-- NEW OPTION -->
-                    <option value="ROLE_RECEPTION,ROLE_LAB">
-                      All-Rounder (Recep + Lab)
-                    </option>
-
-                    <option value="ROLE_ADMIN">
-                      Administrator (Full Access)
-                    </option>
+                    <option value="ROLE_RECEPTION">Receptionist</option>
+                    <option value="ROLE_LAB">Lab Technician</option>
+                    <option value="ROLE_RECEPTION,ROLE_LAB">All-Rounder</option>
+                    <option value="ROLE_ADMIN">Administrator</option>
                   </select>
-                  <small class="text-muted">
-                    <strong>All-Rounder:</strong> Can access both portals.
-                  </small>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">
-                  Create Account
-                </button>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary w-100">
+                    <span
+                      th:text="${newUser.id == null ? 'Create Account' : 'Update User'}"
+                    ></span>
+                  </button>
+                  <!-- Cancel Button (Only if editing) -->
+                  <a
+                    th:if="${newUser.id != null}"
+                    href="/admin/users"
+                    class="btn btn-secondary"
+                    >Cancel</a
+                  >
+                </div>
               </form>
             </div>
           </div>
@@ -117,6 +124,8 @@
                     <th>Username</th>
                     <th>Role</th>
                     <th>Status</th>
+                    <th>Action</th>
+                    <!-- New Header -->
                   </tr>
                 </thead>
                 <tbody>
@@ -127,24 +136,38 @@
                       class="fw-bold font-monospace"
                     ></td>
                     <td>
-                      <span
-                        th:if="${u.role == 'ROLE_ADMIN'}"
-                        class="badge bg-dark"
-                        >ADMIN</span
+                      <!-- (Your existing role badges...) -->
+                      <span th:text="${u.role}"></span>
+                    </td>
+                    <td>
+                      <span th:if="${u.active}" class="badge bg-success"
+                        >Active</span
                       >
-                      <span
-                        th:if="${u.role == 'ROLE_RECEPTION'}"
-                        class="badge bg-primary"
-                        >RECEPTION</span
-                      >
-                      <span
-                        th:if="${u.role == 'ROLE_LAB'}"
-                        class="badge bg-danger"
-                        >LAB TECH</span
+                      <span th:unless="${u.active}" class="badge bg-secondary"
+                        >Inactive</span
                       >
                     </td>
                     <td>
-                      <span class="badge bg-success">Active</span>
+                      <!-- EDIT BUTTON -->
+                      <a
+                        th:if="${u.active}"
+                        th:href="@{/admin/users/edit/{id}(id=${u.id})}"
+                        class="btn btn-sm btn-primary"
+                        title="Edit"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </a>
+
+                      <!-- DEACTIVATE BUTTON (Don't let admin delete themselves) -->
+                      <a
+                        th:if="${u.active and u.username != 'admin'}"
+                        th:href="@{/admin/users/delete/{id}(id=${u.id})}"
+                        class="btn btn-sm btn-danger ms-1"
+                        onclick="return confirm('Are you sure? This user will be blocked from login.')"
+                        title="Deactivate"
+                      >
+                        <i class="fas fa-ban"></i>
+                      </a>
                     </td>
                   </tr>
                 </tbody>

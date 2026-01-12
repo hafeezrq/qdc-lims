@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <title>Pathology Report</title>
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
@@ -187,7 +190,24 @@
         <button onclick="window.print()" class="btn btn-primary btn-lg">
           🖨 Print Report
         </button>
-        <a href="/lab/worklist" class="btn btn-dark btn-lg">Back to Lab</a>
+        <!-- If LAB TECH or ADMIN, show "Back to Lab" -->
+        <a
+          sec:authorize="hasAnyRole('LAB', 'ADMIN')"
+          href="/lab/worklist"
+          class="btn btn-dark btn-lg ms-2"
+        >
+          Back to Lab
+        </a>
+
+        <!-- If RECEPTIONIST or ADMIN, show "Back to Reception" -->
+        <!-- Note: Admin sees both buttons because they have both roles/access -->
+        <a
+          sec:authorize="hasAnyRole('RECEPTION', 'ADMIN')"
+          href="/reception/dashboard"
+          class="btn btn-outline-dark btn-lg ms-2"
+        >
+          Back to Reception
+        </a>
       </div>
     </div>
   </body>

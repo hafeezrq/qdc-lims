@@ -37,8 +37,8 @@ public class MainWebController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //@Autowired
-    //private SupplierRepository supplierRepo; // Supplier Repo
+    // @Autowired
+    // private SupplierRepository supplierRepo; // Supplier Repo
 
     @Autowired
     private PatientService patientService;
@@ -65,11 +65,11 @@ public class MainWebController {
     }
 
     @PostMapping("/setup")
-    public String saveInitialSetup(@ModelAttribute LabInfo labInfo, 
-                                   @RequestParam String adminUsername, 
-                                   @RequestParam String adminPassword,
-                                   Model model) { 
-        
+    public String saveInitialSetup(@ModelAttribute LabInfo labInfo,
+            @RequestParam String adminUsername,
+            @RequestParam String adminPassword,
+            Model model) {
+
         // --- VALIDATION ---
         if (adminPassword.length() < 8 || !adminPassword.matches(".*\\d.*")) {
             model.addAttribute("isFirstRun", true);
@@ -199,10 +199,10 @@ public class MainWebController {
     public String showThermalReceipt(@PathVariable Long orderId, Model model) {
         LabOrder order = orderRepo.findById(orderId).orElseThrow();
         LabInfo info = labInfoRepo.findById(1L).orElse(new LabInfo());
-        
+
         model.addAttribute("order", order);
         model.addAttribute("info", info);
-        return "receipt-thermal"; 
+        return "receipt-thermal";
     }
 
     @GetMapping("/orders/report/{orderId}")
@@ -290,36 +290,80 @@ public class MainWebController {
     @PostMapping("/admin/users")
     public String saveUser(@ModelAttribute com.qdc.lims.entity.User user, Model model) {
         
-        // --- 1. PASSWORD VALIDATION ---
-        String rawPassword = user.getPassword();
-        // Check: Length < 8 OR Does not contain a digit
-        if (rawPassword.length() < 8 || !rawPassword.matches(".*\\d.*")) {
-            // Reload the list (so the page doesn't look empty) and show error
-            model.addAttribute("users", userRepo.findAll());
-            // Send back the user object so they don't have to re-type everything
-            model.addAttribute("newUser", user); 
-            model.addAttribute("errorMessage", "Error: Password must be 8+ chars and contain a number.");
-            return "users-list"; // Stay on page
-        }
-        // ------------------------------
+        // Check if this is an Update (ID exists) or Create (ID null)
+        boolean isUpdate = (user.getId() != null);
 
-        // 2. Check Username Duplicate
-        if (userRepo.findByUsername(user.getUsername()).isPresent()) {
-             model.addAttribute("users", userRepo.findAll());
-             model.addAttribute("newUser", user);
-             model.addAttribute("errorMessage", "Error: Username already exists.");
-             return "users-list";
+        // --- PASSWORD LOGIC ---
+        if (isUpdate) {
+            // Fetch existing from DB to get the old password
+            com.qdc.lims.entity.User existing = userRepo.findById(user.getId()).orElseThrow();
+            
+            if (user.getPassword().isEmpty()) {
+                // Admin left password blank -> Keep old password
+                user.setPassword(existing.getPassword());
+            } else {
+                // Admin typed a new password -> Validate & Encrypt
+                if (user.getPassword().length() < 8) {
+                    return returnUserError(model, user, "Error: Password must be 8+ chars.");
+                }
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+        } else {
+            // Creating New User -> Password is Mandatory
+            if (user.getPassword().isEmpty() || user.getPassword().length() < 8) {
+                return returnUserError(model, user, "Error: Password is required (8+ chars).");
+            }
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
-        user.setPassword(passwordEncoder.encode(rawPassword));
-        user.setActive(true);
+        // --- DUPLICATE USERNAME CHECK ---
+        // Only check if username changed (for updates) or is new
+        com.qdc.lims.entity.User existingUser = userRepo.findByUsername(user.getUsername()).orElse(null);
+        if (existingUser != null && !existingUser.getId().equals(user.getId())) {
+             return returnUserError(model, user, "Error: Username already exists.");
+        }
+
+        user.setActive(true); // Ensure active
         userRepo.save(user);
         return "redirect:/admin/users?success=true";
     }
 
-    // 21. Friendly Access Denied Page
+    // Helper method to reload page with error
+    private String returnUserError(Model model, com.qdc.lims.entity.User user, String msg) {
+        model.addAttribute("users", userRepo.findAll());
+        model.addAttribute("newUser", user);
+        model.addAttribute("errorMessage", msg);
+        return "users-list";
+    }
+
+    // 21. Delete (Deactivate) User
+    @GetMapping("/admin/users/delete/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        com.qdc.lims.entity.User user = userRepo.findById(id).orElseThrow();
+        // Soft Delete: Just turn them off so they can't login
+        user.setActive(false);
+        userRepo.save(user);
+        return "redirect:/admin/users";
+    }
+
+    // 22. Load User for Editing
+    @GetMapping("/admin/users/edit/{id}")
+    public String editUserPage(@PathVariable Long id, Model model) {
+        // Load the specific user
+        com.qdc.lims.entity.User user = userRepo.findById(id).orElseThrow();
+
+        // Load the list (so the right side of screen is still full)
+        model.addAttribute("users", userRepo.findAll());
+
+        // Put the user in the form
+        model.addAttribute("newUser", user);
+
+        return "users-list";
+    }
+
+    // 23. Friendly Access Denied Page
     @GetMapping("/access-denied")
     public String accessDenied() {
-        return "access-denied"; 
+        return "access-denied";
     }
 }
