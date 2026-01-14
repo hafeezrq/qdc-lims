@@ -6,15 +6,29 @@ import com.qdc.lims.util.IdGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service for handling patient registration and related logic.
+ */
 @Service
 public class PatientService {
 
     private final PatientRepository repository;
 
+    /**
+     * Constructs a PatientService with the specified PatientRepository.
+     *
+     * @param repository the repository for patient entities
+     */
     public PatientService(PatientRepository repository) {
         this.repository = repository;
     }
 
+    /**
+     * Registers a new patient, checks for CNIC uniqueness, and generates a unique MRN.
+     *
+     * @param patient the patient entity to register
+     * @return the saved Patient entity
+     */
     @Transactional
     public Patient registerPatient(Patient patient) {
 

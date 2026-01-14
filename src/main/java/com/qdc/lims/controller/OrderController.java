@@ -12,10 +12,22 @@ public class OrderController {
 
     private final OrderService service;
 
+    /**
+     * Constructs an OrderController with the specified OrderService.
+     *
+     * @param service the OrderService to handle order operations
+     */
     public OrderController(OrderService service) {
         this.service = service;
     }
 
+    /**
+     * Creates a new lab order based on the provided OrderRequest.
+     * Returns the created order or an error message if creation fails.
+     *
+     * @param request the order request data
+     * @return ResponseEntity containing the created order or error message
+     */
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest request) {
         try {

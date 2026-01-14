@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.LocalDateTime;
 
+/**
+ * Service for handling lab result entry, validation, and saving logic.
+ */
 @Service
 public class ResultService {
 
@@ -20,10 +23,21 @@ public class ResultService {
     @Autowired
     private LabOrderRepository orderRepo;
 
+    /**
+     * Constructs a ResultService with the specified LabResultRepository.
+     *
+     * @param repository repository for lab results
+     */
     public ResultService(LabResultRepository repository) {
         this.repository = repository;
     }
 
+    /**
+     * Enters a single lab result, applies auto-validation logic, and saves it.
+     *
+     * @param request the result entry request data
+     * @return the saved LabResult entity
+     */
     @Transactional
     public LabResult enterResult(ResultEntryRequest request) {
         // 1. Fetch the specific result row
@@ -60,6 +74,11 @@ public class ResultService {
         return repository.save(result);
     }
 
+    /**
+     * Saves all lab results from a form, applies validation and audit logic, and updates order status.
+     *
+     * @param orderForm the LabOrder containing results to save
+     */
     @Transactional
     public void saveResultsFromForm(LabOrder orderForm) {
 

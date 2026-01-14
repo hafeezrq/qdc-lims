@@ -1,6 +1,11 @@
 package com.qdc.lims.dto;
 
-// We only need the Result ID (which row to update) and the Value.
+/**
+ * DTO for entering a lab result value.
+ *
+ * @param resultId the ID of the result to update
+ * @param value the value to be entered for the result
+ */
 public record ResultEntryRequest(
         Long resultId,
         String value) {

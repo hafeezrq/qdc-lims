@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Entity representing a laboratory test result, including value, abnormality, remarks, and audit trail.
+ */
 @Entity
 @Data
 public class LabResult {

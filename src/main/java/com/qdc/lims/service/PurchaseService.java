@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+/**
+ * Service for handling inventory purchases and supplier ledger updates.
+ */
 @Service
 public class PurchaseService {
 
@@ -16,6 +19,13 @@ public class PurchaseService {
     private final SupplierRepository supplierRepo;
     private final SupplierLedgerRepository ledgerRepo;
 
+    /**
+     * Constructs a PurchaseService with the required repositories.
+     *
+     * @param inventoryRepo repository for inventory items
+     * @param supplierRepo repository for suppliers
+     * @param ledgerRepo repository for supplier ledger entries
+     */
     public PurchaseService(InventoryItemRepository inventoryRepo, SupplierRepository supplierRepo,
             SupplierLedgerRepository ledgerRepo) {
         this.inventoryRepo = inventoryRepo;
@@ -23,6 +33,11 @@ public class PurchaseService {
         this.ledgerRepo = ledgerRepo;
     }
 
+    /**
+     * Processes a purchase request, updates inventory, and creates supplier ledger entries.
+     *
+     * @param request the purchase request data
+     */
     @Transactional
     public void processPurchase(PurchaseRequest request) {
         // --- 1. VALIDATION CHECK ---

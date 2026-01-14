@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
 
+/**
+ * Entity representing a commission ledger entry for a lab order and doctor.
+ */
 @Entity
 @Data
 @Table(name = "commission_ledger")
@@ -29,6 +32,9 @@ public class CommissionLedger {
     private LocalDate transactionDate;
     private String status;
 
+    /**
+     * Sets the transaction date and status before persisting the entity.
+     */
     @PrePersist
     protected void onCreate() {
         this.transactionDate = LocalDate.now();

@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull; // Import for validation
 import lombok.Data;
 import java.time.LocalDate;
 
+/**
+ * Entity representing a patient, including demographic and registration details.
+ */
 @Entity
 @Data
 @Table(name = "patients", indexes = {
@@ -45,6 +48,9 @@ public class Patient {
 
     private LocalDate registrationDate;
 
+    /**
+     * Sets the registration date before persisting the entity.
+     */
     @PrePersist
     protected void onCreate() {
         this.registrationDate = LocalDate.now();

@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Controller for finance-related operations, including commissions and daily closing.
+ */
 @Controller
 public class FinanceController {
 
@@ -25,10 +28,21 @@ public class FinanceController {
     @Autowired
     private com.qdc.lims.repository.DoctorRepository doctorRepo;
 
+    /**
+     * Constructs a FinanceController with the specified LabOrderRepository.
+     *
+     * @param orderRepo repository for lab orders
+     */
     public FinanceController(LabOrderRepository orderRepo) {
         this.orderRepo = orderRepo;
     }
 
+    /**
+     * Displays the commission dashboard for all doctors.
+     *
+     * @param model the model to pass data to the view
+     * @return the view name for the commission dashboard
+     */
     // 1. Show Commission Dashboard
     @GetMapping("/admin/finance/commissions")
     public String commissionDashboard(Model model) {
@@ -52,6 +66,12 @@ public class FinanceController {
         return "finance-commissions";
     }
 
+    /**
+     * Pays a doctor by clearing all their unpaid commission dues.
+     *
+     * @param doctorId the ID of the doctor to pay
+     * @return redirect to the commission dashboard with success flag
+     */
     // 2. Pay a Doctor (Clear all their unpaid dues)
     @PostMapping("/admin/finance/pay-doctor")
     public String payDoctor(@RequestParam Long doctorId) {
@@ -67,6 +87,12 @@ public class FinanceController {
         return "redirect:/admin/finance/commissions?success=true";
     }
 
+    /**
+     * Displays the daily closing summary for today's lab orders.
+     *
+     * @param model the model to pass data to the view
+     * @return the view name for the daily closing summary
+     */
     @GetMapping("/admin/finance/daily")
     public String dailyClosing(Model model) {
         // 1. Define Today's Time Range (00:00 to 23:59:59)

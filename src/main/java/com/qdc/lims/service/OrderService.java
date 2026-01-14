@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service for handling lab order creation and related business logic.
+ */
 @Service
 public class OrderService {
 
@@ -19,7 +22,17 @@ public class OrderService {
     private final TestConsumptionRepository consumptionRepo;
     private final InventoryItemRepository inventoryRepo;
 
-    // Constructor Injection (Spring auto-wires these)
+    /**
+     * Constructs an OrderService with all required repositories.
+     *
+     * @param orderRepo LabOrder repository
+     * @param patientRepo Patient repository
+     * @param testRepo TestDefinition repository
+     * @param doctorRepo Doctor repository
+     * @param commissionRepo CommissionLedger repository
+     * @param consumptionRepo TestConsumption repository
+     * @param inventoryRepo InventoryItem repository
+     */
     public OrderService(LabOrderRepository orderRepo, PatientRepository patientRepo,
             TestDefinitionRepository testRepo, DoctorRepository doctorRepo,
             CommissionLedgerRepository commissionRepo, TestConsumptionRepository consumptionRepo,
@@ -33,6 +46,12 @@ public class OrderService {
         this.inventoryRepo = inventoryRepo;
     }
 
+    /**
+     * Creates a new lab order, handles inventory deduction, finance logic, and commission calculation.
+     *
+     * @param request the order request data
+     * @return the saved LabOrder entity
+     */
     @Transactional
     public LabOrder createOrder(OrderRequest request) {
         // 1. Find Patient

@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+/**
+ * Controller for managing suppliers, purchases, and supplier ledger operations.
+ */
 @Controller
 public class SupplierController {
 
@@ -22,10 +25,21 @@ public class SupplierController {
     @Autowired
     private com.qdc.lims.repository.SupplierLedgerRepository ledgerRepo;
 
+    /**
+     * Constructs a SupplierController with the specified SupplierRepository.
+     *
+     * @param supplierRepo repository for suppliers
+     */
     public SupplierController(SupplierRepository supplierRepo) {
         this.supplierRepo = supplierRepo;
     }
 
+    /**
+     * Displays the add supplier form.
+     *
+     * @param model the model to pass data to the view
+     * @return the view name for the add supplier form
+     */
     // 1. Show Add Form (Default)
     @GetMapping("/admin/suppliers")
     public String addSupplierPage(Model model) {
@@ -33,6 +47,12 @@ public class SupplierController {
         return "suppliers-form";
     }
 
+    /**
+     * Saves a supplier entity.
+     *
+     * @param supplier the supplier to save
+     * @return redirect to the add supplier page with success flag
+     */
     // 2. Save Supplier
     @PostMapping("/admin/suppliers")
     public String saveSupplier(@ModelAttribute Supplier supplier) {
@@ -40,6 +60,12 @@ public class SupplierController {
         return "redirect:/admin/suppliers?success=true";
     }
 
+    /**
+     * Displays the list of suppliers.
+     *
+     * @param model the model to pass data to the view
+     * @return the view name for the supplier list
+     */
     // 3. Show List
     @GetMapping("/admin/suppliers/list")
     public String listSuppliers(Model model) {
@@ -47,6 +73,12 @@ public class SupplierController {
         return "suppliers-list";
     }
 
+    /**
+     * Displays the purchase entry screen for suppliers.
+     *
+     * @param model the model to pass data to the view
+     * @return the view name for purchase entry
+     */
     // 4. Show Purchase Entry Screen
     @GetMapping("/admin/suppliers/purchase")
     public String purchasePage(Model model) {
@@ -55,6 +87,12 @@ public class SupplierController {
         return "purchase-entry";
     }
 
+    /**
+     * API endpoint to save a purchase request for a supplier.
+     *
+     * @param request the purchase request data
+     * @return ResponseEntity with success or error message
+     */
     // 5. API to Save Purchase (Called via JavaScript/Axios)
     @org.springframework.web.bind.annotation.ResponseBody
     @PostMapping("/api/suppliers/purchase")
@@ -72,6 +110,13 @@ public class SupplierController {
         }
     }
 
+    /**
+     * Displays the supplier ledger (statement) for a specific supplier.
+     *
+     * @param id the ID of the supplier
+     * @param model the model to pass data to the view
+     * @return the view name for the supplier ledger
+     */
     // 6. View Supplier Ledger (Statement)
     @GetMapping("/admin/suppliers/ledger/{id}")
     public String viewLedger(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {

@@ -3,6 +3,9 @@ package com.qdc.lims.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing a doctor and their commission details.
+ */
 @Entity
 @Data
 @Table(name = "doctors")

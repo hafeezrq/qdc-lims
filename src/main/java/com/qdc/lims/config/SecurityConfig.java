@@ -16,6 +16,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Configures the security filter chain for HTTP requests, specifying access rules,
+     * login/logout behavior, exception handling, and CSRF settings.
+     *
+     * @param http the HttpSecurity object to configure
+     * @return the configured SecurityFilterChain
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -57,13 +65,23 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Password Encryption Service
+    /**
+     * Provides a password encoder bean using BCrypt hashing algorithm.
+     *
+     * @return a PasswordEncoder instance
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Connect Spring Security to our Database
+    /**
+     * Connects Spring Security to the application's database by providing a custom
+     * UserDetailsService implementation that loads user details from the UserRepository.
+     *
+     * @param userRepo the UserRepository to fetch user data
+     * @return a UserDetailsService instance
+     */
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepo) {
         return username -> {

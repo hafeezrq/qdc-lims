@@ -11,10 +11,21 @@ public class PatientController {
 
     private final PatientService service;
 
+    /**
+     * Constructs a PatientController with the specified PatientService.
+     *
+     * @param service the PatientService to handle patient operations
+     */
     public PatientController(PatientService service) {
         this.service = service;
     }
 
+    /**
+     * Registers a new patient in the system.
+     *
+     * @param patient the patient entity to register
+     * @return ResponseEntity containing the saved patient
+     */
     // Endpoint to Register a new Patient
     // URL: POST http://localhost:8080/api/patients
     @PostMapping
@@ -23,7 +34,11 @@ public class PatientController {
         return ResponseEntity.ok(savedPatient);
     }
 
-    // Simple verification endpoint
+    /**
+     * Simple verification endpoint to check if the system is running.
+     *
+     * @return a status message string
+     */
     @GetMapping("/hello")
     public String sayHello() {
         return "QDC-LIMS System is Running!";

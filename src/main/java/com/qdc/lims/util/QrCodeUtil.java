@@ -8,8 +8,19 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
+/**
+ * Utility class for generating QR codes as Base64-encoded PNG images.
+ */
 public class QrCodeUtil {
 
+    /**
+     * Generates a QR code for the given text and returns it as a Base64-encoded PNG image string.
+     *
+     * @param text the text to encode in the QR code
+     * @param width the width of the QR code image
+     * @param height the height of the QR code image
+     * @return a Base64-encoded PNG image string, or an empty string if generation fails
+     */
     public static String generateBase64Qr(String text, int width, int height) {
         try {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();

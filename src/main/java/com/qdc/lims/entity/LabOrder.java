@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity representing a laboratory order, including patient, doctor, billing, and result details.
+ */
 @Entity
 @Data
 public class LabOrder {
@@ -44,13 +47,19 @@ public class LabOrder {
     @OneToMany(mappedBy = "labOrder", cascade = CascadeType.ALL)
     private List<LabResult> results = new ArrayList<>();
 
+    /**
+     * Sets the order date and initial status before persisting the entity.
+     */
     @PrePersist
     protected void onCreate() {
         this.orderDate = LocalDateTime.now();
         this.status = "PENDING";
     }
 
-    // Helper to auto-calculate balance before saving
+    /**
+     * Calculates the balance due before updating the entity.
+     * Sets balanceDue = totalAmount - discountAmount - paidAmount.
+     */
     @PreUpdate
     public void calculateBalance() {
         if (discountAmount == null)

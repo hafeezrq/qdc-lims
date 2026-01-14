@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Main web controller for handling all portal, dashboard, patient, doctor, test, inventory, and user management operations.
+ */
 @Controller
 public class MainWebController {
 
@@ -45,6 +48,9 @@ public class MainWebController {
 
     // ================= HOME & SETUP =================
 
+    /**
+     * Displays the home page or redirects to setup if no settings exist.
+     */
     @GetMapping("/")
     public String home(Model model) {
         // First Run Check: If no settings exist, force setup
@@ -54,6 +60,9 @@ public class MainWebController {
         return "index"; // The Portal Selection Screen
     }
 
+    /**
+     * Displays the initial setup page if settings do not exist.
+     */
     @GetMapping("/setup")
     public String setupPage(Model model) {
         if (labInfoRepo.count() > 0) {
@@ -64,6 +73,9 @@ public class MainWebController {
         return "settings";
     }
 
+    /**
+     * Saves initial setup information and creates the first admin user.
+     */
     @PostMapping("/setup")
     public String saveInitialSetup(@ModelAttribute LabInfo labInfo,
             @RequestParam String adminUsername,
@@ -95,6 +107,9 @@ public class MainWebController {
 
     // ================= SETTINGS (EDIT MODE) =================
 
+    /**
+     * Displays the settings edit page.
+     */
     @GetMapping("/settings")
     public String settingsPage(Model model) {
         LabInfo info = labInfoRepo.findById(1L).orElse(new LabInfo());
@@ -103,7 +118,9 @@ public class MainWebController {
         return "settings";
     }
 
-    // THIS IS THE METHOD YOU WERE LIKELY MISSING OR WAS BROKEN
+    /**
+     * Saves updated settings.
+     */
     @PostMapping("/settings")
     public String saveSettings(@ModelAttribute LabInfo labInfo) {
         labInfo.setId(1L); // Force Update ID 1
@@ -113,6 +130,9 @@ public class MainWebController {
 
     // ================= DASHBOARDS =================
 
+    /**
+     * Displays the admin dashboard.
+     */
     @GetMapping("/admin/dashboard")
     public String adminDashboard() {
         return "admin-dashboard";
@@ -120,12 +140,18 @@ public class MainWebController {
 
     // ================= RECEPTION MODULE =================
 
+    /**
+     * Displays the patient registration form.
+     */
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("patient", new Patient());
         return "register-patient";
     }
 
+    /**
+     * Registers a new patient and redirects to booking, or shows error.
+     */
     @PostMapping("/register")
     public String registerPatient(@ModelAttribute Patient patient, Model model) {
         try {
@@ -138,6 +164,9 @@ public class MainWebController {
         }
     }
 
+    /**
+     * Displays the patient search page and results.
+     */
     @GetMapping("/search")
     public String searchPage(@RequestParam(value = "query", required = false) String query, Model model) {
         if (query != null && !query.isEmpty()) {
@@ -148,6 +177,9 @@ public class MainWebController {
         return "search-patient";
     }
 
+    /**
+     * Displays the patient history page.
+     */
     @GetMapping("/patient/history/{id}")
     public String patientHistoryPage(@PathVariable Long id, Model model) {
         Patient patient = patientRepo.findById(id).orElseThrow();
@@ -157,6 +189,9 @@ public class MainWebController {
         return "patient-history";
     }
 
+    /**
+     * Pays the balance for a lab order.
+     */
     @PostMapping("/orders/pay-balance")
     public String payBalance(@RequestParam Long orderId, @RequestParam Double amount) {
         LabOrder order = orderRepo.findById(orderId).orElseThrow();
@@ -169,6 +204,9 @@ public class MainWebController {
 
     // ================= BOOKING & ORDERS =================
 
+    /**
+     * Displays the booking page for a patient.
+     */
     @GetMapping("/book-test")
     public String bookTestPage(@RequestParam Long patientId, Model model) {
         Patient patient = patientRepo.findById(patientId).orElseThrow();
@@ -184,6 +222,9 @@ public class MainWebController {
         return "book-test";
     }
 
+    /**
+     * Displays the receipt for a lab order.
+     */
     @GetMapping("/orders/receipt/{orderId}")
     public String showReceipt(@PathVariable Long orderId, Model model) {
         LabOrder order = orderRepo.findById(orderId).orElseThrow();
@@ -195,6 +236,9 @@ public class MainWebController {
     }
 
     // 13a. Show Thermal Receipt (80mm)
+    /**
+     * Displays the thermal receipt for a lab order.
+     */
     @GetMapping("/orders/receipt/thermal/{orderId}")
     public String showThermalReceipt(@PathVariable Long orderId, Model model) {
         LabOrder order = orderRepo.findById(orderId).orElseThrow();
@@ -205,6 +249,9 @@ public class MainWebController {
         return "receipt-thermal";
     }
 
+    /**
+     * Displays the report for a lab order.
+     */
     @GetMapping("/orders/report/{orderId}")
     public String showReport(@PathVariable Long orderId, Model model) {
         LabOrder order = orderRepo.findById(orderId).orElseThrow();
@@ -223,18 +270,27 @@ public class MainWebController {
 
     // ================= DOCTORS =================
 
+    /**
+     * Displays the doctor add form.
+     */
     @GetMapping("/doctors")
     public String doctorAddPage(Model model) {
         model.addAttribute("newDoctor", new Doctor());
         return "doctors-form";
     }
 
+    /**
+     * Displays the doctor list page.
+     */
     @GetMapping("/doctors/list")
     public String doctorListPage(Model model) {
         model.addAttribute("doctors", doctorRepo.findAll());
         return "doctors-list";
     }
 
+    /**
+     * Saves a doctor entity.
+     */
     @PostMapping("/doctors")
     public String saveDoctor(@ModelAttribute Doctor doctor) {
         doctorRepo.save(doctor);
@@ -243,18 +299,27 @@ public class MainWebController {
 
     // ================= TESTS =================
 
+    /**
+     * Displays the test add form.
+     */
     @GetMapping("/tests")
     public String testsAddPage(Model model) {
         model.addAttribute("newTest", new com.qdc.lims.entity.TestDefinition());
         return "tests-form";
     }
 
+    /**
+     * Displays the test list page.
+     */
     @GetMapping("/tests/list")
     public String testsListPage(Model model) {
         model.addAttribute("tests", testRepo.findAll());
         return "tests-list";
     }
 
+    /**
+     * Saves a test definition entity.
+     */
     @PostMapping("/tests")
     public String saveTest(@ModelAttribute com.qdc.lims.entity.TestDefinition test) {
         testRepo.save(test);
@@ -263,6 +328,9 @@ public class MainWebController {
 
     // ================= INVENTORY =================
 
+    /**
+     * Displays the inventory page.
+     */
     @GetMapping("/inventory")
     public String inventoryPage(Model model) {
         model.addAttribute("items", inventoryRepo.findAll());
@@ -270,6 +338,9 @@ public class MainWebController {
         return "inventory";
     }
 
+    /**
+     * Saves an inventory item entity.
+     */
     @PostMapping("/inventory")
     public String saveInventory(@ModelAttribute com.qdc.lims.entity.InventoryItem item) {
         inventoryRepo.save(item);
@@ -278,6 +349,9 @@ public class MainWebController {
 
     // ================= USER MANAGEMENT =================
 
+    /**
+     * Displays the user list and add form.
+     */
     // 19. Show User List & Add Form
     @GetMapping("/admin/users")
     public String usersPage(Model model) {
@@ -286,6 +360,9 @@ public class MainWebController {
         return "users-list";
     }
 
+    /**
+     * Saves a new or updated user entity.
+     */
     // 20. Save New User
     @PostMapping("/admin/users")
     public String saveUser(@ModelAttribute com.qdc.lims.entity.User user, Model model) {
@@ -328,14 +405,9 @@ public class MainWebController {
         return "redirect:/admin/users?success=true";
     }
 
-    // Helper method to reload page with error
-    private String returnUserError(Model model, com.qdc.lims.entity.User user, String msg) {
-        model.addAttribute("users", userRepo.findAll());
-        model.addAttribute("newUser", user);
-        model.addAttribute("errorMessage", msg);
-        return "users-list";
-    }
-
+    /**
+     * Deletes (deactivates) a user by ID.
+     */
     // 21. Delete (Deactivate) User
     @GetMapping("/admin/users/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
@@ -346,6 +418,9 @@ public class MainWebController {
         return "redirect:/admin/users";
     }
 
+    /**
+     * Loads a user for editing by ID.
+     */
     // 22. Load User for Editing
     @GetMapping("/admin/users/edit/{id}")
     public String editUserPage(@PathVariable Long id, Model model) {
@@ -361,9 +436,22 @@ public class MainWebController {
         return "users-list";
     }
 
+    /**
+     * Displays the access denied page.
+     */
     // 23. Friendly Access Denied Page
     @GetMapping("/access-denied")
     public String accessDenied() {
         return "access-denied";
+    }
+
+    /**
+     * Helper method to reload the user page with an error message.
+     */
+    private String returnUserError(Model model, com.qdc.lims.entity.User user, String msg) {
+        model.addAttribute("users", userRepo.findAll());
+        model.addAttribute("newUser", user);
+        model.addAttribute("errorMessage", msg);
+        return "users-list";
     }
 }

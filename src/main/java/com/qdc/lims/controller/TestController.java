@@ -5,23 +5,40 @@ import com.qdc.lims.repository.TestDefinitionRepository;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+/**
+ * REST controller for managing test definitions in the system.
+ */
 @RestController
 @RequestMapping("/api/tests")
 public class TestController {
 
     private final TestDefinitionRepository repository;
 
+    /**
+     * Constructs a TestController with the specified TestDefinitionRepository.
+     *
+     * @param repository the repository for test definitions
+     */
     public TestController(TestDefinitionRepository repository) {
         this.repository = repository;
     }
 
-    // 1. Add a new Test to the Menu
+    /**
+     * Adds a new test definition to the menu.
+     *
+     * @param test the TestDefinition to add
+     * @return the saved TestDefinition
+     */
     @PostMapping
     public TestDefinition createTest(@RequestBody TestDefinition test) {
         return repository.save(test);
     }
 
-    // 2. View all available tests (The "Menu")
+    /**
+     * Retrieves all available test definitions (the menu).
+     *
+     * @return a list of all TestDefinition entities
+     */
     @GetMapping
     public List<TestDefinition> getAllTests() {
         return repository.findAll();

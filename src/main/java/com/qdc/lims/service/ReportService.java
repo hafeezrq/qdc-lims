@@ -9,15 +9,29 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.awt.Color;
 
+/**
+ * Service for generating PDF lab reports for orders.
+ */
 @Service
 public class ReportService {
 
     private final LabOrderRepository orderRepo;
 
+    /**
+     * Constructs a ReportService with the specified LabOrderRepository.
+     *
+     * @param orderRepo repository for lab orders
+     */
     public ReportService(LabOrderRepository orderRepo) {
         this.orderRepo = orderRepo;
     }
 
+    /**
+     * Generates a PDF report for the specified lab order ID.
+     *
+     * @param orderId the ID of the lab order
+     * @return a byte array containing the PDF report
+     */
     public byte[] generatePdfReport(Long orderId) {
         LabOrder order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -91,6 +105,13 @@ public class ReportService {
         }
     }
 
+    /**
+     * Adds a cell to the PDF table with specified text and style.
+     *
+     * @param table the PDF table to add the cell to
+     * @param text the text content of the cell
+     * @param isHeader true if the cell is a header cell, false otherwise
+     */
     private void addCell(PdfPTable table, String text, boolean isHeader) {
         Font font = isHeader ? FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Color.WHITE)
                 : FontFactory.getFont(FontFactory.HELVETICA, 12);

@@ -13,6 +13,9 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
+/**
+ * Controller for lab operations including worklist display and result entry.
+ */
 @Controller
 public class LabController {
 
@@ -21,10 +24,21 @@ public class LabController {
     @Autowired
     private com.qdc.lims.service.ResultService resultService; // Inject Service
 
+    /**
+     * Constructs a LabController with the specified LabOrderRepository.
+     *
+     * @param orderRepo repository for lab orders
+     */
     public LabController(LabOrderRepository orderRepo) {
         this.orderRepo = orderRepo;
     }
 
+    /**
+     * Displays the pending worklist of lab orders.
+     *
+     * @param model the model to pass data to the view
+     * @return the view name for the worklist
+     */
     // 1. Show Pending Worklist
     @GetMapping("/lab/worklist")
     public String showWorklist(Model model) {
@@ -36,6 +50,14 @@ public class LabController {
         return "lab-worklist";
     }
 
+    /**
+     * Shows the form for entering results for a specific lab order.
+     * Blocks access if the report has already been delivered.
+     *
+     * @param id the ID of the lab order
+     * @param model the model to pass data to the view
+     * @return the view name for result entry
+     */
     // 2. Show the "Enter Results" Form
     @GetMapping("/lab/enter-results/{id}")
     public String enterResultsPage(@PathVariable Long id, Model model) {
@@ -53,6 +75,14 @@ public class LabController {
         return "lab-entry";
     }
 
+    /**
+     * Saves the entered lab results from the form.
+     * Handles errors and redirects appropriately.
+     *
+     * @param order the LabOrder containing results
+     * @param model the model to pass data to the view
+     * @return the view name or redirect URL
+     */
     // 3. Save the Data
     @PostMapping("/lab/save-results")
     public String saveResults(@ModelAttribute LabOrder order, Model model) {

@@ -3,6 +3,9 @@ package com.qdc.lims.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing laboratory information and contact details.
+ */
 @Entity
 @Data
 @Table(name = "lab_info")

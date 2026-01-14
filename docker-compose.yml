@@ -1,13 +1,13 @@
 services:
   # 1. The Database Container
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: qdc_postgres
     restart: always
     environment:
       POSTGRES_DB: qdc_lims_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: securepassword
+      POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
     volumes:
@@ -25,7 +25,7 @@ services:
       # Note: 'db' here refers to the service name above, not localhost
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/qdc_lims_db
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: securepassword
+      SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
       - db # Wait for DB to start before starting App

@@ -3,6 +3,9 @@ package com.qdc.lims.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing an inventory item and its stock details.
+ */
 @Entity
 @Data
 @Table(name = "inventory_items")
@@ -20,8 +23,6 @@ public class InventoryItem {
     private Double minThreshold; // e.g., 50.0. If stock drops below this, ALERT!
 
     private String unit; // e.g., "pcs", "ml", "strips"
-
-    // --- NEW FIELDS FOR FINANCE ---
 
     // The Weighted Average Cost (e.g. Rs 15.5 per unit)
     // Updated automatically every time we buy stock.

@@ -6,6 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing test recipes and their ingredients.
+ */
 @Controller
 public class RecipeController {
 
@@ -13,6 +16,13 @@ public class RecipeController {
     private final InventoryItemRepository inventoryRepo;
     private final TestConsumptionRepository consumptionRepo;
 
+    /**
+     * Constructs a RecipeController with the required repositories.
+     *
+     * @param testRepo repository for test definitions
+     * @param inventoryRepo repository for inventory items
+     * @param consumptionRepo repository for test consumptions
+     */
     public RecipeController(TestDefinitionRepository testRepo, InventoryItemRepository inventoryRepo,
             TestConsumptionRepository consumptionRepo) {
         this.testRepo = testRepo;
@@ -20,7 +30,13 @@ public class RecipeController {
         this.consumptionRepo = consumptionRepo;
     }
 
-    // 1. Show the Recipe Page for a specific Test
+    /**
+     * Displays the recipe manager page for a specific test.
+     *
+     * @param testId the ID of the test
+     * @param model the model to pass data to the view
+     * @return the view name for the recipe manager
+     */
     @GetMapping("/tests/{testId}/recipe")
     public String showRecipe(@PathVariable Long testId, Model model) {
         TestDefinition test = testRepo.findById(testId).orElseThrow();
@@ -34,7 +50,14 @@ public class RecipeController {
         return "recipe-manager";
     }
 
-    // 2. Add an Ingredient to the Recipe
+    /**
+     * Adds an ingredient to the recipe for a test.
+     *
+     * @param testId the ID of the test
+     * @param itemId the ID of the inventory item
+     * @param quantity the quantity of the item to add
+     * @return redirect to the recipe manager view
+     */
     @PostMapping("/tests/{testId}/recipe")
     public String addIngredient(@PathVariable Long testId,
             @RequestParam Long itemId,
@@ -53,7 +76,13 @@ public class RecipeController {
         return "redirect:/tests/" + testId + "/recipe";
     }
 
-    // 3. Remove an Ingredient
+    /**
+     * Removes an ingredient from the recipe for a test.
+     *
+     * @param testId the ID of the test
+     * @param consumptionId the ID of the test consumption to remove
+     * @return redirect to the recipe manager view
+     */
     @GetMapping("/tests/{testId}/recipe/delete/{consumptionId}")
     public String removeIngredient(@PathVariable Long testId, @PathVariable Long consumptionId) {
         consumptionRepo.deleteById(consumptionId);
