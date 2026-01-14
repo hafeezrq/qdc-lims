@@ -13,7 +13,7 @@ public class IdGenerator {
     private static final Random RANDOM = new Random();
 
     /**
-     * Generates a random 6-digit Medical Record Number (MRN) formatted as XXX-XXX.
+     * Generates a random 6-digit Medical Record Number (MRN) formatted as nuumerics-numerics.
      *
      * @return a formatted MRN string (e.g., 852-304)
      */
@@ -21,7 +21,6 @@ public class IdGenerator {
         // Generate 6 random numbers
         String rawId = NanoIdUtils.randomNanoId(RANDOM, NUMBERS, 6);
 
-        // Format as XXX-XXX (e.g., 852-304)
         return rawId.substring(0, 3) + "-" + rawId.substring(3, 6);
     }
 }
