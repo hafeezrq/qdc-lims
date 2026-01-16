@@ -7,24 +7,57 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * Repository interface for LabOrder entities, providing CRUD operations and custom queries
+ * for dashboard statistics and patient order history.
+ */
 public interface LabOrderRepository extends JpaRepository<LabOrder, Long> {
 
-    // Find all orders for a patient, sorted by newest first
+    /**
+     * Finds all orders for a specific patient, sorted by order ID in descending order.
+     *
+     * @param patientId the ID of the patient
+     * @return list of LabOrders for the patient, newest first
+     */
     List<LabOrder> findByPatientIdOrderByIdDesc(Long patientId);
 
-    // --- NEW DASHBOARD QUERIES ---
-
-    // 1. Processing (Status PENDING, Today)
+    /**
+     * Finds orders with a specific status within a date range (for dashboard processing counts).
+     *
+     * @param status the order status (e.g., "PENDING", "COMPLETED")
+     * @param start the start of the date range
+     * @param end the end of the date range
+     * @return list of matching LabOrders
+     */
     List<LabOrder> findByStatusAndOrderDateBetween(String status, LocalDateTime start, LocalDateTime end);
 
-    // 2. Ready for Pickup (Status COMPLETED, Not Delivered, Today)
+    /**
+     * Finds completed orders that have not been delivered, within a date range (for pickup queue).
+     *
+     * @param status the order status (typically "COMPLETED")
+     * @param start the start of the date range
+     * @param end the end of the date range
+     * @return list of LabOrders ready for pickup
+     */
     List<LabOrder> findByStatusAndIsReportDeliveredFalseAndOrderDateBetween(String status, LocalDateTime start,
             LocalDateTime end);
 
-    // 3. Collected (Delivered True, Delivery Date Today)
+    /**
+     * Finds orders that were delivered (collected) within a specific date range.
+     *
+     * @param start the start of the delivery date range
+     * @param end the end of the delivery date range
+     * @return list of collected LabOrders
+     */
     List<LabOrder> findByIsReportDeliveredTrueAndDeliveryDateBetween(LocalDateTime start, LocalDateTime end);
 
-    // 4. Fetch all orders for a specific date range (e.g., Today 00:00 to 23:59)
+    /**
+     * Finds all orders created within a specific date range.
+     *
+     * @param start the start of the order date range
+     * @param end the end of the order date range
+     * @return list of LabOrders within the date range
+     */
     List<LabOrder> findByOrderDateBetween(LocalDateTime start, LocalDateTime end);
 
 }

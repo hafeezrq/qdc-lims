@@ -3,6 +3,10 @@ package com.qdc.lims.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing a recipe that links a test to inventory items and their required quantities.
+ * This forms the basis for automatic inventory deduction when tests are ordered.
+ */
 @Entity
 @Data
 @Table(name = "test_consumption")

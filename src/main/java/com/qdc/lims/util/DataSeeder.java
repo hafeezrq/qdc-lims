@@ -2,11 +2,16 @@ package com.qdc.lims.util;
 
 import com.qdc.lims.entity.*;
 import com.qdc.lims.repository.*;
-import com.qdc.lims.service.PatientService; // <--- This was missing
+import com.qdc.lims.service.PatientService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Utility component for seeding the database with default data on application startup.
+ * Seeds inventory items, doctors, test definitions, test consumption recipes, and sample patients.
+ * Only runs once on first startup when the database is empty.
+ */
 @Component
 public class DataSeeder implements CommandLineRunner {
 
@@ -18,6 +23,17 @@ public class DataSeeder implements CommandLineRunner {
     private final PatientService patientService;
     //private final LabInfoRepository labInfoRepo;
 
+    /**
+     * Constructs a DataSeeder with the required repositories and services.
+     *
+     * @param inventoryRepo repository for inventory items
+     * @param doctorRepo repository for doctors
+     * @param testRepo repository for test definitions
+     * @param recipeRepo repository for test consumption recipes
+     * @param patientRepo repository for patients
+     * @param patientService service for patient registration logic
+     * @param labInfoRepo repository for lab information
+     */
     public DataSeeder(InventoryItemRepository inventoryRepo, DoctorRepository doctorRepo,
             TestDefinitionRepository testRepo, TestConsumptionRepository recipeRepo,
             PatientRepository patientRepo, PatientService patientService, LabInfoRepository labInfoRepo) {
@@ -30,6 +46,13 @@ public class DataSeeder implements CommandLineRunner {
         //this.labInfoRepo = labInfoRepo;
     }
 
+    /**
+     * Runs the data seeding process on application startup.
+     * Checks if the database is already populated; if not, seeds default data.
+     *
+     * @param args command line arguments (unused)
+     * @throws Exception if an error occurs during seeding
+     */
     @Override
     @Transactional
     public void run(String... args) throws Exception {
@@ -145,6 +168,13 @@ public class DataSeeder implements CommandLineRunner {
         System.out.println("✅ Seeding Complete! System ready.");
     }
 
+    /**
+     * Creates a test consumption recipe entry linking a test to an inventory item.
+     *
+     * @param test the test definition
+     * @param item the inventory item consumed by the test
+     * @param qty the quantity of the item consumed per test
+     */
     private void createRecipe(TestDefinition test, InventoryItem item, Double qty) {
         TestConsumption tc = new TestConsumption();
         tc.setTest(test);

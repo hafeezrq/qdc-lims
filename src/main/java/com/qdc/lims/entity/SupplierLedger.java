@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
 
+/**
+ * Entity representing a financial ledger entry for tracking purchases from and payments to suppliers.
+ */
 @Entity
 @Data
 @Table(name = "supplier_ledger")
@@ -27,6 +30,9 @@ public class SupplierLedger {
     private Double billAmount = 0.0; // Money we OWE (Credit) - Increases Balance
     private Double paidAmount = 0.0; // Money we PAID (Debit) - Decreases Balance
 
+    /**
+     * Sets the transaction date before persisting the entity if not already set.
+     */
     @PrePersist
     protected void onCreate() {
         if (transactionDate == null)

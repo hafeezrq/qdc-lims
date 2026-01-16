@@ -3,6 +3,9 @@ package com.qdc.lims.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing a laboratory test definition, including pricing, ranges, and consumption recipes.
+ */
 @Entity
 @Data
 @Table(name = "test_definitions")

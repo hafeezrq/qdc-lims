@@ -3,6 +3,9 @@ package com.qdc.lims.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing a supplier from whom inventory items are purchased.
+ */
 @Entity
 @Data
 @Table(name = "suppliers")

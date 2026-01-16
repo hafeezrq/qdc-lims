@@ -3,6 +3,10 @@ package com.qdc.lims.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing age and gender-specific reference ranges for lab test results.
+ * Used for automatic flagging of abnormal values based on patient demographics.
+ */
 @Entity
 @Data
 public class ReferenceRange {

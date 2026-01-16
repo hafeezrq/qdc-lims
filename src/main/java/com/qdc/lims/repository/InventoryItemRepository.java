@@ -4,8 +4,16 @@ import com.qdc.lims.entity.InventoryItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
+/**
+ * Repository interface for InventoryItem entities, providing stock management queries.
+ */
 public interface InventoryItemRepository extends JpaRepository<InventoryItem, Long> {
-    // Find items that are running low
-    // SQL: SELECT * FROM items WHERE current_stock <= min_threshold
+    /**
+     * Finds all inventory items where current stock is at or below the minimum threshold.
+     * Used for low stock alerts.
+     *
+     * @param threshold the stock threshold value
+     * @return list of InventoryItems running low on stock
+     */
     List<InventoryItem> findByCurrentStockLessThanEqual(Double threshold);
 }

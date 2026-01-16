@@ -3,6 +3,10 @@ package com.qdc.lims.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing a system user with authentication credentials and role-based access.
+ * Passwords are stored using BCrypt hashing. Roles can be comma-separated for multiple access levels.
+ */
 @Entity
 @Data
 @Table(name = "users")
